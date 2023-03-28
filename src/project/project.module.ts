@@ -1,12 +1,13 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { project, work, worker_role } from './entity/project.entity';
+import { User } from 'src/user/entity/user.entity';
+import { ecofield, project, record, work, worker_role } from './entity/project.entity';
 import { ProjectController } from './project.controller';
 import { ProjectService } from './project.service';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([project, work, worker_role])
+    TypeOrmModule.forFeature([project, work, worker_role, User, record, ecofield])
   ],
   controllers: [ProjectController],
   providers: [ProjectService]

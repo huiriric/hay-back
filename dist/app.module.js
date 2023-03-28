@@ -27,7 +27,8 @@ AppModule = __decorate([
                 database: 'reorderplus',
                 synchronize: true,
                 logging: ['error'],
-                entities: [user_entity_1.User, project_entity_1.project, project_entity_1.work, project_entity_1.worker_role]
+                entities: [user_entity_1.User, project_entity_1.project, project_entity_1.work, project_entity_1.worker_role, project_entity_1.record, project_entity_1.ecofield],
+                useUTC: false
             }),
             user_module_1.UserModule, project_module_1.ProjectModule
         ],

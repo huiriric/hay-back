@@ -9,6 +9,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.ProjectModule = void 0;
 const common_1 = require("@nestjs/common");
 const typeorm_1 = require("@nestjs/typeorm");
+const user_entity_1 = require("../user/entity/user.entity");
 const project_entity_1 = require("./entity/project.entity");
 const project_controller_1 = require("./project.controller");
 const project_service_1 = require("./project.service");
@@ -17,7 +18,7 @@ let ProjectModule = class ProjectModule {
 ProjectModule = __decorate([
     (0, common_1.Module)({
         imports: [
-            typeorm_1.TypeOrmModule.forFeature([project_entity_1.project, project_entity_1.work, project_entity_1.worker_role])
+            typeorm_1.TypeOrmModule.forFeature([project_entity_1.project, project_entity_1.work, project_entity_1.worker_role, user_entity_1.User, project_entity_1.record, project_entity_1.ecofield])
         ],
         controllers: [project_controller_1.ProjectController],
         providers: [project_service_1.ProjectService]

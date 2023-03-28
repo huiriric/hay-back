@@ -9,9 +9,10 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.loginOutputDto = exports.signupOutputDto = void 0;
+exports.searchUserOutputDto = exports.userPositionOutputDto = exports.userListOutputDto = exports.loginOutputDto = exports.signupOutputDto = void 0;
 const swagger_1 = require("@nestjs/swagger");
 const output_dto_1 = require("../../common/dto/output.dto");
+const user_entity_1 = require("../entity/user.entity");
 class signupOutputDto extends output_dto_1.CoreOutput {
 }
 __decorate([
@@ -37,5 +38,34 @@ __decorate([
     (0, swagger_1.ApiProperty)({ type: String, description: '이름' }),
     __metadata("design:type", String)
 ], loginOutputDto.prototype, "name", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ type: Boolean, description: '위치 공유' }),
+    __metadata("design:type", Boolean)
+], loginOutputDto.prototype, "share", void 0);
 exports.loginOutputDto = loginOutputDto;
+class userListOutputDto extends output_dto_1.CoreOutput {
+}
+__decorate([
+    (0, swagger_1.ApiProperty)({ type: [user_entity_1.User], description: 'user' }),
+    __metadata("design:type", Array)
+], userListOutputDto.prototype, "user", void 0);
+exports.userListOutputDto = userListOutputDto;
+class userPositionOutputDto {
+}
+exports.userPositionOutputDto = userPositionOutputDto;
+class searchUserOutputDto extends output_dto_1.CoreOutput {
+}
+__decorate([
+    (0, swagger_1.ApiProperty)({ type: Number, description: 'id' }),
+    __metadata("design:type", Number)
+], searchUserOutputDto.prototype, "id", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ type: String, description: '이름' }),
+    __metadata("design:type", String)
+], searchUserOutputDto.prototype, "name", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ type: String, description: '휴대폰 번호' }),
+    __metadata("design:type", String)
+], searchUserOutputDto.prototype, "phone", void 0);
+exports.searchUserOutputDto = searchUserOutputDto;
 //# sourceMappingURL=user.output.dto.js.map

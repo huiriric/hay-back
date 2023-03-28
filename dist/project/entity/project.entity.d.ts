@@ -17,7 +17,19 @@ export declare class work extends CoreEntity {
     owner: string;
     phone: string;
     worker_id: number;
+    worker_name: string;
     request: string;
     prefer: string;
     status: string;
+}
+export declare class record extends work {
+    work_id: number;
+    url: string;
+}
+export declare class ecofield extends CoreEntity {
+    project_id: number;
+    address: string;
+    area: number;
+    owner: string;
+    phone: string;
 }

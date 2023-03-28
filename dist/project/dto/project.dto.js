@@ -9,10 +9,14 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.workDto = exports.workerDto = exports.ProjectDto = void 0;
+exports.ecofieldDto = exports.recordDto = exports.workDto = exports.addWorkerDto = exports.workerDto = exports.ProjectDto = void 0;
 const swagger_1 = require("@nestjs/swagger");
 class ProjectDto {
 }
+__decorate([
+    (0, swagger_1.ApiProperty)({ type: Number, description: 'primary key' }),
+    __metadata("design:type", Number)
+], ProjectDto.prototype, "id", void 0);
 __decorate([
     (0, swagger_1.ApiProperty)({ type: Number, description: 'userId' }),
     __metadata("design:type", Number)
@@ -41,12 +45,35 @@ __decorate([
     __metadata("design:type", Number)
 ], workerDto.prototype, "worker_id", void 0);
 __decorate([
+    (0, swagger_1.ApiProperty)({ type: String, description: 'worker_name' }),
+    __metadata("design:type", String)
+], workerDto.prototype, "worker_name", void 0);
+__decorate([
     (0, swagger_1.ApiProperty)({ type: String, description: 'worker_role' }),
     __metadata("design:type", String)
 ], workerDto.prototype, "role", void 0);
 exports.workerDto = workerDto;
+class addWorkerDto {
+}
+__decorate([
+    (0, swagger_1.ApiProperty)({ type: Number, description: 'project_id' }),
+    __metadata("design:type", Number)
+], addWorkerDto.prototype, "project_id", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ type: Number, description: 'worker_id' }),
+    __metadata("design:type", Number)
+], addWorkerDto.prototype, "worker_id", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ type: String, description: 'worker_role' }),
+    __metadata("design:type", String)
+], addWorkerDto.prototype, "role", void 0);
+exports.addWorkerDto = addWorkerDto;
 class workDto {
 }
+__decorate([
+    (0, swagger_1.ApiProperty)({ type: Number, description: 'id' }),
+    __metadata("design:type", Number)
+], workDto.prototype, "id", void 0);
 __decorate([
     (0, swagger_1.ApiProperty)({ type: Number, description: 'project_id' }),
     __metadata("design:type", Number)
@@ -68,9 +95,13 @@ __decorate([
     __metadata("design:type", Number)
 ], workDto.prototype, "area", void 0);
 __decorate([
-    (0, swagger_1.ApiProperty)({ type: Number, description: 'worker' }),
+    (0, swagger_1.ApiProperty)({ type: Number, description: 'workerId' }),
     __metadata("design:type", Number)
 ], workDto.prototype, "worker_id", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ type: String, description: 'workerName' }),
+    __metadata("design:type", String)
+], workDto.prototype, "worker_name", void 0);
 __decorate([
     (0, swagger_1.ApiProperty)({ type: String, description: 'request' }),
     __metadata("design:type", String)
@@ -84,4 +115,38 @@ __decorate([
     __metadata("design:type", String)
 ], workDto.prototype, "status", void 0);
 exports.workDto = workDto;
+class recordDto extends workDto {
+}
+__decorate([
+    (0, swagger_1.ApiProperty)({ type: Number, description: 'work_id' }),
+    __metadata("design:type", Number)
+], recordDto.prototype, "work_id", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ type: String, description: 'url' }),
+    __metadata("design:type", String)
+], recordDto.prototype, "url", void 0);
+exports.recordDto = recordDto;
+class ecofieldDto {
+}
+__decorate([
+    (0, swagger_1.ApiProperty)({ type: Number, description: 'project_id' }),
+    __metadata("design:type", Number)
+], ecofieldDto.prototype, "project_id", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ type: String, description: 'address' }),
+    __metadata("design:type", String)
+], ecofieldDto.prototype, "address", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ type: Number, description: 'areae' }),
+    __metadata("design:type", Number)
+], ecofieldDto.prototype, "area", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ type: String, description: 'owner' }),
+    __metadata("design:type", String)
+], ecofieldDto.prototype, "owner", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ type: String, description: 'phone' }),
+    __metadata("design:type", String)
+], ecofieldDto.prototype, "phone", void 0);
+exports.ecofieldDto = ecofieldDto;
 //# sourceMappingURL=project.dto.js.map

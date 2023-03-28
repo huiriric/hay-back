@@ -26,6 +26,22 @@ __decorate([
     (0, typeorm_1.Column)(),
     __metadata("design:type", String)
 ], User.prototype, "name", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ nullable: true, type: 'numeric' }),
+    __metadata("design:type", Number)
+], User.prototype, "longitude", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ nullable: true, type: 'numeric' }),
+    __metadata("design:type", Number)
+], User.prototype, "latitude", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ nullable: true }),
+    __metadata("design:type", Boolean)
+], User.prototype, "share", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ nullable: true }),
+    __metadata("design:type", Boolean)
+], User.prototype, "on", void 0);
 User = __decorate([
     (0, typeorm_1.Entity)()
 ], User);

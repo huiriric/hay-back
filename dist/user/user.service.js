@@ -18,6 +18,7 @@ const typeorm_1 = require("@nestjs/typeorm");
 const user_entity_1 = require("./entity/user.entity");
 const typeorm_2 = require("typeorm");
 const user_output_dto_1 = require("./dto/user.output.dto");
+const output_dto_1 = require("../common/dto/output.dto");
 let UserService = class UserService {
     constructor(user) {
         this.user = user;
@@ -31,6 +32,7 @@ let UserService = class UserService {
                 result.error = '이미 존재하는 휴대폰 번호입니다.';
             }
             else {
+                signup.share = true;
                 await this.user.save(signup);
                 result.ok = true;
                 result.name = signup.name;
@@ -49,9 +51,12 @@ let UserService = class UserService {
         try {
             const exist = await this.user.findOneBy(login);
             if (exist) {
+                exist.on = true;
+                await this.user.save(exist);
                 result.ok = true;
                 result.name = exist.name;
                 result.phone = exist.phone;
+                result.share = exist.share;
                 result.id = exist.id;
             }
             else {
@@ -65,6 +70,104 @@ let UserService = class UserService {
             result.error = '로그인 중 오류가 발생했습니다.';
         }
         return result;
+    }
+    async logout(id) {
+        const result = new output_dto_1.CoreOutput();
+        try {
+            const exist = await this.user.findOneBy({
+                id: id
+            });
+            exist.on = false;
+            await this.user.save(exist);
+            result.ok = true;
+            result.error = 'Logout 성공';
+        }
+        catch (error) {
+            console.log(error);
+            result.ok = false;
+            result.error = '로그아웃 도중 오류가 발생했습니다.';
+        }
+        return result;
+    }
+    async resume(id) {
+        const result = new output_dto_1.CoreOutput();
+        try {
+            const exist = await this.user.findOneBy({
+                id: id
+            });
+            exist.on = true;
+            await this.user.save(exist);
+            result.ok = true;
+        }
+        catch (error) {
+            console.log(error);
+            result.ok = false;
+            result.error = '재실행 상태를 저장하던 도중 오류가 발생했습니다.';
+        }
+        return result;
+    }
+    async searchUser(phone) {
+        const result = new user_output_dto_1.searchUserOutputDto();
+        try {
+            const user = await this.user.findOneBy({
+                phone: phone
+            });
+            if (user) {
+                result.ok = true;
+                result.id = user.id;
+                result.name = user.name;
+                result.phone = user.phone;
+            }
+            return result;
+        }
+        catch (error) {
+            console.log(error);
+            result.ok = false;
+            result.error = '사용자를 찾던 도중 오류가 발생했습니다.';
+        }
+    }
+    async sharePosition(position) {
+        const result = new output_dto_1.CoreOutput();
+        try {
+            const save = await this.user.save(position);
+            result.ok = true;
+        }
+        catch (error) {
+            console.log(error);
+            result.ok = false;
+            result.error = '위치를 저장하는 도중 오류가 발생했습니다.';
+        }
+        return result;
+    }
+    async changeShare(changeShareDto) {
+        const result = new output_dto_1.CoreOutput();
+        console.log('share: ' + changeShareDto.share);
+        try {
+            const exist = await this.user.findOneBy({
+                id: changeShareDto.id
+            });
+            exist.share = changeShareDto.share;
+            const save = await this.user.save(exist);
+            result.ok = true;
+        }
+        catch (error) {
+            console.log(error);
+            result.ok = false;
+            result.error = '위치 공유 유무를 변경하는 도중 오류가 발생했습니다.';
+        }
+        return result;
+    }
+    async getShare(id) {
+        try {
+            const user = await this.user.findOneBy({
+                id: id
+            });
+            return user.share;
+        }
+        catch (error) {
+            console.log(error);
+            return null;
+        }
     }
 };
 UserService = __decorate([

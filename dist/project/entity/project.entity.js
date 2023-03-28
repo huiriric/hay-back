@@ -9,7 +9,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.work = exports.worker_role = exports.project = void 0;
+exports.ecofield = exports.record = exports.work = exports.worker_role = exports.project = void 0;
 const core_entity_1 = require("../../common/entity/core.entity");
 const typeorm_1 = require("typeorm");
 let project = class project extends core_entity_1.CoreEntity {
@@ -81,6 +81,10 @@ __decorate([
 __decorate([
     (0, typeorm_1.Column)({ nullable: true }),
     __metadata("design:type", String)
+], work.prototype, "worker_name", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ nullable: true }),
+    __metadata("design:type", String)
 ], work.prototype, "request", void 0);
 __decorate([
     (0, typeorm_1.Column)({ nullable: true }),
@@ -94,4 +98,44 @@ work = __decorate([
     (0, typeorm_1.Entity)()
 ], work);
 exports.work = work;
+let record = class record extends work {
+};
+__decorate([
+    (0, typeorm_1.Column)(),
+    __metadata("design:type", Number)
+], record.prototype, "work_id", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ nullable: true }),
+    __metadata("design:type", String)
+], record.prototype, "url", void 0);
+record = __decorate([
+    (0, typeorm_1.Entity)()
+], record);
+exports.record = record;
+let ecofield = class ecofield extends core_entity_1.CoreEntity {
+};
+__decorate([
+    (0, typeorm_1.Column)(),
+    __metadata("design:type", Number)
+], ecofield.prototype, "project_id", void 0);
+__decorate([
+    (0, typeorm_1.Column)(),
+    __metadata("design:type", String)
+], ecofield.prototype, "address", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ type: 'numeric' }),
+    __metadata("design:type", Number)
+], ecofield.prototype, "area", void 0);
+__decorate([
+    (0, typeorm_1.Column)(),
+    __metadata("design:type", String)
+], ecofield.prototype, "owner", void 0);
+__decorate([
+    (0, typeorm_1.Column)(),
+    __metadata("design:type", String)
+], ecofield.prototype, "phone", void 0);
+ecofield = __decorate([
+    (0, typeorm_1.Entity)()
+], ecofield);
+exports.ecofield = ecofield;
 //# sourceMappingURL=project.entity.js.map

@@ -7,7 +7,7 @@ import { UserService } from './user/user.service';
 import { UserModule } from './user/user.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from './user/entity/user.entity';
-import { project, work, worker_role } from './project/entity/project.entity';
+import { ecofield, project, record, work, worker_role } from './project/entity/project.entity';
 
 @Module({
   imports: [
@@ -20,7 +20,8 @@ import { project, work, worker_role } from './project/entity/project.entity';
       database: 'reorderplus',
       synchronize: true,
       logging: ['error'],
-      entities: [User, project, work, worker_role]
+      entities: [User, project, work, worker_role, record, ecofield],
+      useUTC: false
     }),
     UserModule, ProjectModule],
   

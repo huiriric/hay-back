@@ -14,4 +14,16 @@ export class User extends CoreEntity {
 
   @Column()
   name: string;
+
+  @Column({ nullable: true, type: 'numeric'})
+  longitude: number;
+
+  @Column({ nullable: true, type: 'numeric'})
+  latitude: number;
+
+  @Column({ nullable: true })
+  share: boolean;
+
+  @Column({ nullable: true })
+  on: boolean;
 }
