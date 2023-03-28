@@ -3,6 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const core_1 = require("@nestjs/core");
 const swagger_1 = require("@nestjs/swagger");
 const app_module_1 = require("./app.module");
+const check_project_1 = require("./project/check.project");
 async function bootstrap() {
     const app = await core_1.NestFactory.create(app_module_1.AppModule);
     app.enableCors();
@@ -14,6 +15,7 @@ async function bootstrap() {
     const document = swagger_1.SwaggerModule.createDocument(app, config);
     swagger_1.SwaggerModule.setup('api', app, document);
     await app.listen(3700);
+    (0, check_project_1.checkProject)();
 }
 bootstrap();
 //# sourceMappingURL=main.js.map

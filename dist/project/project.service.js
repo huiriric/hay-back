@@ -163,6 +163,22 @@ let ProjectService = class ProjectService {
         try {
             const save = await this.work.save(work);
             this.recordWork(work);
+            const project_id = work.project_id;
+            const works = await this.work.findBy({
+                project_id: project_id
+            });
+            let done = true;
+            works.forEach((val, index) => {
+                if (!(val.status == '작업 완료' || val.status == '작업 중단'))
+                    done = false;
+            });
+            if (done) {
+                const project = await this.project.findOneBy({
+                    id: project_id
+                });
+                project.status = true;
+                const save = await this.project.save(project);
+            }
             result.ok = true;
         }
         catch (error) {
@@ -468,6 +484,19 @@ let ProjectService = class ProjectService {
             result.error = '친환경 필지 정보를 가져오는 도중 오류가 발생했습니다.';
         }
         return result;
+    }
+    async check() {
+        var today = new Date();
+        today = new Date(today);
+        const list = await this.project.findBy({
+            status: true
+        });
+        list.forEach((val) => {
+            var temp = new Date(val.updatedAt.setDate(val.updatedAt.getDate() + 1));
+            console.log(temp);
+            console.log(today);
+        });
+        return true;
     }
 };
 ProjectService = __decorate([

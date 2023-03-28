@@ -31,4 +31,5 @@ export declare class ProjectService {
     getEcoListProject(project_id: number): Promise<ecofieldListOutputDto>;
     getEcoListUser(id: number): Promise<ecofieldListOutputDto>;
     getEcoInfo(id: number): Promise<ecofieldOutputDto>;
+    check(): Promise<boolean>;
 }

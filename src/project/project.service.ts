@@ -560,5 +560,22 @@ export class ProjectService {
     return result;
   }
 
-  
+  async check(): Promise<boolean> {
+  var today = new Date();
+  today = new Date(today);
+
+  const list = await this.project.findBy({
+    status: true
+  })
+
+  list.forEach((val) => {
+    var temp = new Date(val.updatedAt.setDate(val.updatedAt.getDate() + 1));
+    // if (temp < today) {
+      // this.ProjectService.deleteProject(val.id);
+      console.log(temp);
+      console.log(today);
+    // }
+  })
+    return true;
+}
 }
