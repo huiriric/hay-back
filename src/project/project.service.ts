@@ -196,6 +196,12 @@ export class ProjectService {
         })
         project.status = true;
         const save = await this.project.save(project);
+      } else {
+        const project = await this.project.findOneBy({
+          id: project_id
+        })
+        project.status = false;
+        const save = await this.project.save(project);
       }
 
 
