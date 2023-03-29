@@ -1,11 +1,11 @@
 import { getRepository } from 'typeorm';
-import { ecofield, project, work, worker_role } from './entity/project.entity';
+import { ecofield, project, record, work, worker_role } from './entity/project.entity';
 import { ProjectService } from './project.service';
 
 
 export async function checkProject() {
   const nodeSchedule = require('node-schedule');
-  const checkSchedule = nodeSchedule.scheduleJob('00 00 01 * * *', function () {
+  const checkSchedule = nodeSchedule.scheduleJob('00 00 13 * * *', function () {
     check();
   })
 }
@@ -32,9 +32,13 @@ export async function check() {
       await worker_role.delete({
         project_id: val.id
       })
+      await record.delete({
+        project_id: val.id
+      })
       await ecofield.delete({
         project_id: val.id
       })
+
     }
   })
 }
