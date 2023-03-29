@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entity/user.entity';
 import { Repository } from 'typeorm';
-import { changeShareDto, loginDto, positionDto, signupDto } from './dto/user.dto';
+import { changeShareDto, loginDto, positionDto, signupDto, tokenLoginDto } from './dto/user.dto';
 import { loginOutputDto, searchUserOutputDto, signupOutputDto } from './dto/user.output.dto';
 import { CoreOutput } from 'src/common/dto/output.dto';
 
@@ -41,9 +41,14 @@ export class UserService {
     const result = new loginOutputDto();
 
     try {
-      const exist = await this.user.findOneBy(login)
+      const exist = await this.user.findOneBy({
+        phone: login.phone,
+        password: login.password
+      })
       if (exist) {
         exist.on = true;
+        console.log(exist);
+        exist.token = login.token;
         await this.user.save(exist);
         result.ok = true;
         result.name = exist.name;
@@ -58,6 +63,34 @@ export class UserService {
       console.log(error);
       result.ok = false;
       result.error = '로그인 중 오류가 발생했습니다.';
+    }
+    return result;
+  }
+
+  async tokenLogin(token: tokenLoginDto): Promise<loginOutputDto> {
+    const result = new loginOutputDto();
+
+    try {
+
+      const exist = await this.user.findOneBy({
+        token: token.token
+      })
+
+      if (exist) {
+        result.ok = true;
+        result.id = exist.id;
+        result.name = exist.name;
+        result.phone = exist.phone;
+        result.share = exist.share;
+      } else {
+        result.ok = false;
+        result.error = '토큰값이 존재하지 않습니다.'
+      }
+      
+    } catch (error) {
+      console.log(error)
+      result.ok = false;
+      result.error = '토큰 로그인 중 오류가 발생했습니다.'
     }
     return result;
   }

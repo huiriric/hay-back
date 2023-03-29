@@ -1,6 +1,6 @@
 import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { ApiBody, ApiOperation, ApiResponse } from '@nestjs/swagger';
-import { changeShareDto, loginDto, positionDto, signupDto } from './dto/user.dto';
+import { changeShareDto, loginDto, positionDto, signupDto, tokenLoginDto } from './dto/user.dto';
 import { searchUserOutputDto } from './dto/user.output.dto';
 import { UserService } from './user.service';
 
@@ -38,6 +38,21 @@ export class UserController {
   })
   login(@Body() loginDto: loginDto) {
     return this.userService.login(loginDto);
+  }
+
+  @Post('tokenLogin')
+  @ApiResponse({
+    status: 201,
+    description: '토큰 로그인 성공'
+  })
+  @ApiOperation({
+    description: '토큰 로그인'
+  })
+  @ApiBody({
+    type: tokenLoginDto
+  })
+  tokenLogin(@Body() tokenLoginDto: tokenLoginDto) {
+    return this.userService.tokenLogin(tokenLoginDto);
   }
 
   @Get('logout/:id')

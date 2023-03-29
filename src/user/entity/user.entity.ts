@@ -15,6 +15,9 @@ export class User extends CoreEntity {
   @Column()
   name: string;
 
+  @Column({nullable: true})
+  token: string;
+
   @Column({ nullable: true, type: 'numeric'})
   longitude: number;
 

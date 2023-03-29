@@ -21,6 +21,14 @@ export class loginDto {
 
   @ApiProperty({ type: String, description: '비밀번호' })
   password: string;
+
+  @ApiProperty({ type: String, description: '토큰값' })
+  token: string;
+}
+
+export class tokenLoginDto {
+  @ApiProperty({ type: String, description: '토큰값' })
+  token: string;
 }
 
 export class sharePositionDto {
