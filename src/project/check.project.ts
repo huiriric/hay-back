@@ -5,7 +5,7 @@ import { ProjectService } from './project.service';
 
 export async function checkProject() {
   const nodeSchedule = require('node-schedule');
-  const checkSchedule = nodeSchedule.scheduleJob('00 00 13 * * *', function () {
+  const checkSchedule = nodeSchedule.scheduleJob('00 00 01 * * *', function () {
     check();
   })
 }
