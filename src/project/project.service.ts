@@ -239,7 +239,7 @@ export class ProjectService {
 
     try {
       result.records = await this.record.findBy({
-        work_id: id
+        project_id: id
       })
       
       result.records.sort((a, b) => a.id - b.id)
@@ -260,6 +260,8 @@ export class ProjectService {
       result.records = await this.record.findBy({
         project_id: id
       })
+
+      console.log(result.records);
 
       result.records.sort((a, b) => a.id - b.id)
       console.log(result.records);
