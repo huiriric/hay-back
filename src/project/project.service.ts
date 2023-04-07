@@ -63,6 +63,9 @@ export class ProjectService {
       const eco = await this.ecofield.delete({
         project_id: project_id
       })
+      const record = await this.record.delete({
+        project_id: project_id
+      })
 
       result.ok = true;
     } catch (error) {
@@ -239,7 +242,7 @@ export class ProjectService {
 
     try {
       result.records = await this.record.findBy({
-        project_id: id
+        work_id: id
       })
       
       result.records.sort((a, b) => b.id - a.id)
@@ -280,6 +283,10 @@ export class ProjectService {
     try {
       const delwork = await this.work.delete({
         id: id
+      })
+
+      const deleteRecord = await this.record.delete({
+        work_id: id
       })
 
       result.ok = true;
