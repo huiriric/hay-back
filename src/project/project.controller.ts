@@ -87,7 +87,7 @@ export class ProjectController {
     return this.projectService.getRecordWork(id);
   }
 
-  @Get('getRecordProject/:project')
+  @Get('getRecordProject/:id')
   @ApiOperation({
     summary: '프로젝트 기록 불러오기'
   })
