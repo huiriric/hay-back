@@ -221,7 +221,7 @@ export class ProjectService {
 
     try {
       const id = work.id
-      record = { ...work, work_id: id, url: null, id: null }
+      record = { ...work, work_id: id, id: null }
       work.id = null;
       const save = await this.record.save(record);
       result.ok = true;

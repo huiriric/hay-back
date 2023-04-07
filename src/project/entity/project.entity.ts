@@ -69,7 +69,7 @@ export class record extends work {
   @Column()
   work_id: number;
   @Column({nullable: true})
-  url: string
+  memo: string
 
 }
 

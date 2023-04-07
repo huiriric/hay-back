@@ -80,13 +80,14 @@ export class workDto {
 
   @ApiProperty({ type: String, description: 'status' })
   status: string;
+
+  @ApiProperty({ type: String, description: 'memo' })
+  memo?: string;
 }
 
 export class recordDto extends workDto {
   @ApiProperty({type: Number, description: 'work_id'})
   work_id: number;
-  @ApiProperty({type: String, description: 'url'})
-  url: string
 }
 
 export class ecofieldDto {
