@@ -242,7 +242,7 @@ export class ProjectService {
         project_id: id
       })
       
-      result.records.sort((a, b) => a.id - b.id)
+      result.records.sort((a, b) => b.id - a.id)
       console.log(result.records);
       result.ok = true
       
@@ -263,7 +263,7 @@ export class ProjectService {
 
       console.log(result.records);
 
-      result.records.sort((a, b) => a.id - b.id)
+      result.records.sort((a, b) => b.id - a.id)
       console.log(result.records);
       result.ok = true
       
