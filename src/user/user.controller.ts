@@ -67,6 +67,18 @@ export class UserController {
     return this.userService.logout(id);
   }
 
+  @Get('paused/:id')
+  @ApiResponse({
+    status: 200,
+    description: 'paused 성공'
+  })
+  @ApiOperation({
+    description: 'paused'
+  })
+  paused(@Param('id') id:number ) {
+    return this.userService.paused(id);
+  }
+
   @Get('resume/:id')
   @ApiResponse({
     status: 200,

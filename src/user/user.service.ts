@@ -103,6 +103,7 @@ export class UserService {
         id: id
       })
       exist.on = false; // 앱이 paused 상태일 때
+      exist.token = null;
       await this.user.save(exist)
       result.ok = true;
       result.error = 'Logout 성공'
@@ -112,6 +113,24 @@ export class UserService {
       result.ok = false;
       result.error = '로그아웃 도중 오류가 발생했습니다.'
       
+    }
+    return result;
+  }
+
+  async paused(id: number): Promise<CoreOutput> {
+    const result = new CoreOutput();
+
+    try {
+      const exist = await this.user.findOneBy({
+        id: id
+      })
+      exist.on = false;
+      await this.user.save(exist);
+      result.ok = true;
+    } catch (ex) {
+      console.log(ex);
+      result.ok = false;
+      result.error = 'paused 도중 오류가 발생했습니다.'
     }
     return result;
   }
