@@ -175,6 +175,13 @@ export class ProjectService {
     const result = new workListOutputDto();
 
     try {
+      const user = await this.user.findOneBy({
+        id: work.worker_id
+      })
+      if (user) {
+        work.worker_name = user.name;
+      }
+      
       const save = await this.work.save(work);
       this.recordWork(work)
 
