@@ -6,10 +6,8 @@ import { ProjectController } from './project.controller';
 import { ProjectService } from './project.service';
 
 @Module({
-  imports: [
-    TypeOrmModule.forFeature([project, work, worker_role, User, record, ecofield])
-  ],
+  imports: [TypeOrmModule.forFeature([project, work, worker_role, User, record, ecofield])],
   controllers: [ProjectController],
-  providers: [ProjectService]
+  providers: [ProjectService],
 })
 export class ProjectModule {}
