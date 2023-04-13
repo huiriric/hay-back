@@ -259,7 +259,7 @@ export class ProjectService {
       });
 
       result.records.sort((a, b) => b.id - a.id);
-      console.log(result.records);
+      // console.log(result.records);
       result.ok = true;
     } catch (error) {
       result.ok = false;
@@ -276,10 +276,10 @@ export class ProjectService {
         project_id: id,
       });
 
-      console.log(result.records);
+      // console.log(result.records);
 
       result.records.sort((a, b) => b.id - a.id);
-      console.log(result.records);
+      // console.log(result.records);
       result.ok = true;
     } catch (error) {
       result.ok = false;
@@ -340,7 +340,7 @@ export class ProjectService {
         }
       }
       result.work.sort((a, b) => a.id - b.id);
-      console.log(result.work);
+      // console.log(result.work);
       result.ok = true;
     } catch (error) {
       console.log(error);
@@ -531,7 +531,7 @@ export class ProjectService {
 
       const list = await this.work.query(query);
 
-      console.log(list);
+      // console.log(list);
 
       result.list = list;
       result.ok = true;
