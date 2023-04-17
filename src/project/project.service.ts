@@ -421,6 +421,9 @@ export class ProjectService {
         `Select distinct project_id from public.worker_role where worker_id = ` + id.toString() + ` and role != '방제사'`,
       );
 
+      if (project.length < 1) {
+        query = query + `project_id = 0 or`;
+      }
       for (let i = 0; i < project.length; i++) {
         query = query + `project_id = ` + project[i].project_id.toString() + ` or `;
       }
@@ -579,10 +582,11 @@ export class ProjectService {
 
   async getEcoListUser(id: number): Promise<ecofieldListOutputDto> {
     const result = new ecofieldListOutputDto();
-    let query = 'SELECT * FROM public.ecofield where ';
 
     try {
       const project = await this.worker_role.query(`SELECT distinct project_id FROM public.worker_role where worker_id = ` + id);
+
+      let query = 'SELECT * FROM public.ecofield where ';
 
       if (project.length < 1) {
         query = query + `project_id = 0`;
