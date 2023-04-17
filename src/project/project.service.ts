@@ -422,7 +422,7 @@ export class ProjectService {
       );
 
       if (project.length < 1) {
-        query = query + `project_id = 0 or`;
+        query = query + `project_id = 0 or `;
       }
       for (let i = 0; i < project.length; i++) {
         query = query + `project_id = ` + project[i].project_id.toString() + ` or `;
