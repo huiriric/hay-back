@@ -414,7 +414,7 @@ export class ProjectService {
 
   async getWorkListUser(id: number): Promise<workListOutputDto> {
     const result = new workListOutputDto();
-    let query = 'SELECT * FROM public.work where ';
+    let query = 'SELECT * FROM public.work where (';
 
     try {
       const project = await this.worker_role.query(
@@ -428,7 +428,7 @@ export class ProjectService {
         query = query + `project_id = ` + project[i].project_id.toString() + ` or `;
       }
 
-      query = query + `worker_id = ` + id.toString() + ` and status != '작업 완료' order by id asc`;
+      query = query + `worker_id = ` + id.toString() + `) and status != '작업 완료' order by id asc`;
 
       const list = await this.work.query(query);
 
