@@ -182,6 +182,13 @@ export class ProjectService {
     const result = new workListOutputDto();
 
     try {
+      // 완료된 작업 삭제
+      const works = await this.work.delete({
+        project_id: work.project_id,
+        status: '작업 완료',
+      });
+
+      // worker id 에 대한 이름 추가
       const user = await this.user.findOneBy({
         id: work.worker_id,
       });
@@ -192,6 +199,36 @@ export class ProjectService {
       }
 
       const save = await this.work.save(work);
+
+      // 기록
+      this.recordWork(work);
+
+      result.ok = true;
+    } catch (error) {
+      console.log(error);
+      result.ok = false;
+      result.error = '작업을 저장하는 도중 오류가 발생했습니다.';
+    }
+    return result;
+  }
+
+  async editWork(work: workDto): Promise<workListOutputDto> {
+    const result = new workListOutputDto();
+
+    try {
+      // worker id 에 대한 이름 추가
+      const user = await this.user.findOneBy({
+        id: work.worker_id,
+      });
+      if (user) {
+        work.worker_name = user.name;
+      } else {
+        work.worker_name = null;
+      }
+
+      const save = await this.work.save(work);
+
+      // 기록
       this.recordWork(work);
 
       // project 상태(진행, 완료) 변경
@@ -221,6 +258,31 @@ export class ProjectService {
         project.status = false;
         const save = await this.project.save(project);
       }
+
+      result.ok = true;
+    } catch (error) {
+      console.log(error);
+      result.ok = false;
+      result.error = '작업을 저장하는 도중 오류가 발생했습니다.';
+    }
+    return result;
+  }
+
+  async editWorker(work: workDto): Promise<workListOutputDto> {
+    const result = new workListOutputDto();
+
+    try {
+      // worker id 에 대한 이름 추가
+      const user = await this.user.findOneBy({
+        id: work.worker_id,
+      });
+      if (user) {
+        work.worker_name = user.name;
+      } else {
+        work.worker_name = null;
+      }
+
+      const save = await this.work.save(work);
 
       result.ok = true;
     } catch (error) {
@@ -522,9 +584,13 @@ export class ProjectService {
     try {
       const project = await this.worker_role.query(`SELECT distinct project_id FROM public.worker_role where worker_id = ` + id);
 
-      for (let i = 0; i < project.length; i++) {
-        query = query + `project_id = ` + project[i].project_id.toString();
-        if (i != project.length - 1) query = query + ` or `;
+      if (project.length < 1) {
+        query = query + `project_id = 0`;
+      } else {
+        for (let i = 0; i < project.length; i++) {
+          query = query + `project_id = ` + project[i].project_id.toString();
+          if (i != project.length - 1) query = query + ` or `;
+        }
       }
 
       query = query + ' order by id asc';

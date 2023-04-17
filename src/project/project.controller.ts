@@ -86,6 +86,32 @@ export class ProjectController {
     return this.projectService.saveWork(workList);
   }
 
+  @Post('editWork')
+  @ApiResponse({
+    status: 201,
+    description: '작업 수정 성공',
+  })
+  @ApiOperation({
+    summary: '작업 수정',
+  })
+  @ApiBody({ type: workDto })
+  editWork(@Body() workList: workDto): Promise<workListOutputDto> {
+    return this.projectService.editWork(workList);
+  }
+
+  @Post('editWorker')
+  @ApiResponse({
+    status: 201,
+    description: '작업자 수정 성공',
+  })
+  @ApiOperation({
+    summary: '작업자 수정',
+  })
+  @ApiBody({ type: workDto })
+  editWorker(@Body() workList: workDto): Promise<workListOutputDto> {
+    return this.projectService.editWorker(workList);
+  }
+
   @Get('getRecordWork/:id')
   @ApiOperation({
     summary: '작업 기록 불러오기',
