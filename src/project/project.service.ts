@@ -428,7 +428,7 @@ export class ProjectService {
         query = query + `project_id = ` + project[i].project_id.toString() + ` or `;
       }
 
-      query = query + `worker_id = ` + id.toString() + ` order by id asc`;
+      query = query + `worker_id = ` + id.toString() + ` and status != '작업 완료' order by id asc`;
 
       const list = await this.work.query(query);
 
