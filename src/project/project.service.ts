@@ -15,6 +15,7 @@ import {
   workerPositionListDto,
   ecofieldListOutputDto,
   ecofieldOutputDto,
+  workPercentOutputDto,
 } from './dto/project.output.dto';
 import { User } from 'src/user/entity/user.entity';
 import { userListOutputDto } from 'src/user/dto/user.output.dto';
@@ -183,10 +184,10 @@ export class ProjectService {
 
     try {
       // 완료된 작업 삭제
-      const works = await this.work.delete({
-        project_id: work.project_id,
-        status: '작업 완료',
-      });
+      // const works = await this.work.delete({
+      //   project_id: work.project_id,
+      //   status: '작업 완료',
+      // });
 
       // worker id 에 대한 이름 추가
       const user = await this.user.findOneBy({
@@ -381,6 +382,55 @@ export class ProjectService {
         worker_id: user,
       });
       if (userRole.role == '방제사') {
+        // result.work = await this.work.findBy({
+        //   project_id: project_id,
+        //   worker_id: user,
+        //   status: '작업 예정' || '작업 시작' || '재작업 요청' || '작업 중단',
+        // });
+        result.work = await this.work.query(
+          `SELECT * FROM public.work where project_id = ` + project_id + ` and worker_id = ` + user + ` and status != '작업 완료' ORDER BY id ASC`,
+        );
+      } else {
+        // result.work = await this.work.findBy({
+        //   project_id: project_id,
+        //   status: '작업 예정' || '작업 시작' || '재작업 요청' || '작업 중단',
+        // });
+        result.work = await this.work.query(
+          `SELECT * FROM public.work where project_id = ` + project_id + ` and status != '작업 완료' ORDER BY id ASC`,
+        );
+      }
+
+      for (let i = 0; i < result.work.length; i++) {
+        if (result.work[i].worker_id != 0) {
+          let userInfo = await this.user.findOneBy({
+            id: result.work[i].worker_id,
+          });
+          result.work[i].worker_name = userInfo.name;
+        } else {
+          result.work[i].worker_name = null;
+        }
+      }
+      result.work.sort((a, b) => a.id - b.id);
+      // console.log(result.work);
+      result.ok = true;
+    } catch (error) {
+      console.log(error);
+      result.ok = false;
+      result.error = '프로젝트 작업 리스트를 가져오는 도중 오류가 발생했습니다.';
+    }
+    return result;
+  }
+
+  async getWorksExcel(project_id: number, user: number): Promise<workListOutputDto> {
+    const result = new workListOutputDto();
+    let list = [];
+    let userName = [];
+    try {
+      const userRole = await this.worker_role.findOneBy({
+        project_id: project_id,
+        worker_id: user,
+      });
+      if (userRole.role == '방제사') {
         result.work = await this.work.findBy({
           project_id: project_id,
           worker_id: user,
@@ -408,6 +458,57 @@ export class ProjectService {
       console.log(error);
       result.ok = false;
       result.error = '프로젝트 작업 리스트를 가져오는 도중 오류가 발생했습니다.';
+    }
+    return result;
+  }
+
+  async getWorksPercent(project_id: number, user: number): Promise<workPercentOutputDto> {
+    const result = new workPercentOutputDto();
+    let list = [];
+    let userName = [];
+    let total;
+    let done;
+    let ratio;
+    let total_len;
+    let done_len;
+    try {
+      const userRole = await this.worker_role.findOneBy({
+        project_id: project_id,
+        worker_id: user,
+      });
+      // 유저 별 전체 work
+      if (userRole.role == '방제사') {
+        total = await this.work.findBy({
+          project_id: project_id,
+          worker_id: user,
+        });
+
+        done = await this.work.findBy({
+          project_id: project_id,
+          worker_id: user,
+          status: '작업 완료',
+        });
+      } else {
+        total = await this.work.findBy({
+          project_id: project_id,
+        });
+
+        done = await this.work.findBy({
+          project_id: project_id,
+          status: '작업 완료',
+        });
+      }
+      total_len = total.length;
+      done_len = done.length;
+      ratio = done_len / total_len;
+      console.log(ratio);
+
+      result.total = total_len;
+      result.done = done_len;
+      result.ok = true;
+    } catch (error) {
+      console.log(error);
+      result.ok = false;
     }
     return result;
   }

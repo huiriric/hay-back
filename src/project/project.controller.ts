@@ -12,6 +12,7 @@ import {
   workerPositionListDto,
   workListOutputDto,
   workOutputDto,
+  workPercentOutputDto,
 } from './dto/project.output.dto';
 import { ProjectService } from './project.service';
 
@@ -153,6 +154,26 @@ export class ProjectController {
   @ApiResponse({ status: 200, description: '프로젝트 작업 리스트 불러오기 성공' })
   getWorksProjectUser(@Param('project') project: number, @Param('user') user: number): Promise<workListOutputDto> {
     return this.projectService.getWorksProjectUser(project, user);
+  }
+
+  @Get('getWorksExcel/:project/:user')
+  @ApiOperation({
+    summary: '프로젝트 작업 리스트 불러오기',
+    description: '프로젝트 작업 리스트 불러오기',
+  })
+  @ApiResponse({ status: 200, description: '프로젝트 작업 리스트 불러오기 성공' })
+  getWorksExcel(@Param('project') project: number, @Param('user') user: number): Promise<workListOutputDto> {
+    return this.projectService.getWorksExcel(project, user);
+  }
+
+  @Get('getWorksPercent/:project/:user')
+  @ApiOperation({
+    summary: '프로젝트 진행도 불러오기',
+    description: '프로젝트 진행도 불러오기',
+  })
+  @ApiResponse({ status: 200, description: '프로젝트 진행도 불러오기 성공' })
+  getWorksPercent(@Param('project') project: number, @Param('user') user: number): Promise<workPercentOutputDto> {
+    return this.projectService.getWorksPercent(project, user);
   }
 
   @Get('getWorkListUser/:id')
