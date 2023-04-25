@@ -1,6 +1,5 @@
-import { ApiProperty } from "@nestjs/swagger";
-import { ecofield, record } from "../entity/project.entity";
-
+import { ApiProperty } from '@nestjs/swagger';
+import { ecofield, record } from '../entity/project.entity';
 
 export class ProjectDto {
   @ApiProperty({ type: Number, description: 'primary key' })
@@ -20,37 +19,34 @@ export class ProjectDto {
 }
 
 export class workerDto {
-  
-    @ApiProperty({ type: Number, description: 'project_id' })
-    project_id: number;
+  @ApiProperty({ type: Number, description: 'project_id' })
+  project_id: number;
 
-    @ApiProperty({ type: Number, description: 'worker_id' })
-    worker_id: number;
-  
-    @ApiProperty({ type: String, description: 'worker_name' })
-    worker_name: string;
+  @ApiProperty({ type: Number, description: 'worker_id' })
+  worker_id: number;
 
-    @ApiProperty({ type: String, description: 'worker_role' })
-    role: string;
-  
+  @ApiProperty({ type: String, description: 'worker_name' })
+  worker_name: string;
+
+  @ApiProperty({ type: String, description: 'worker_role' })
+  role: string;
 }
 
 export class addWorkerDto {
-    @ApiProperty({ type: Number, description: 'project_id' })
-    project_id: number;
+  @ApiProperty({ type: Number, description: 'project_id' })
+  project_id: number;
 
-    @ApiProperty({ type: Number, description: 'worker_id' })
-    worker_id: number;
+  @ApiProperty({ type: Number, description: 'worker_id' })
+  worker_id: number;
 
-    @ApiProperty({ type: String, description: 'worker_role' })
-    role: string;
+  @ApiProperty({ type: String, description: 'worker_role' })
+  role: string;
 }
 
 export class workDto {
-
   @ApiProperty({ type: Number, description: 'id' })
   id: number;
-  
+
   @ApiProperty({ type: Number, description: 'project_id' })
   project_id: number;
 
@@ -72,8 +68,11 @@ export class workDto {
   @ApiProperty({ type: String, description: 'workerName' })
   worker_name: string;
 
-  @ApiProperty({ type: String, description: 'request' })
-  request: string;
+  // @ApiProperty({ type: String, description: 'request' })
+  // request: string;
+
+  @ApiProperty({ type: String, description: 'workerPhone' })
+  worker_phone?: string;
 
   @ApiProperty({ type: String, description: 'prefer' })
   prefer: string;
@@ -86,23 +85,23 @@ export class workDto {
 }
 
 export class recordDto extends workDto {
-  @ApiProperty({type: Number, description: 'work_id'})
+  @ApiProperty({ type: Number, description: 'work_id' })
   work_id: number;
 }
 
 export class ecofieldDto {
-  @ApiProperty({type: Number, description: 'project_id'})
+  @ApiProperty({ type: Number, description: 'project_id' })
   project_id: number;
 
-  @ApiProperty({ type: String, description: 'address'})
+  @ApiProperty({ type: String, description: 'address' })
   address: string;
 
   @ApiProperty({ type: Number, description: 'areae' })
   area: number;
 
-  @ApiProperty({ type: String, description: 'owner'})
+  @ApiProperty({ type: String, description: 'owner' })
   owner: string;
 
-  @ApiProperty({ type: String, description: 'phone'})
+  @ApiProperty({ type: String, description: 'phone' })
   phone: string;
 }

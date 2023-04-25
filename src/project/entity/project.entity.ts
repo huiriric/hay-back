@@ -1,5 +1,5 @@
-import { CoreEntity } from "src/common/entity/core.entity";
-import { Column, Entity, BeforeInsert } from "typeorm";
+import { CoreEntity } from 'src/common/entity/core.entity';
+import { Column, Entity, BeforeInsert } from 'typeorm';
 
 @Entity()
 export class project extends CoreEntity {
@@ -14,7 +14,6 @@ export class project extends CoreEntity {
 
   @Column()
   status: boolean;
-
 }
 
 @Entity()
@@ -31,14 +30,13 @@ export class worker_role extends CoreEntity {
 
 @Entity()
 export class work extends CoreEntity {
-
   @Column()
   project_id: number;
-  
+
   @Column()
   address: string;
 
-  @Column({ type: 'numeric'})
+  @Column({ type: 'numeric' })
   area: number;
 
   @Column()
@@ -47,30 +45,28 @@ export class work extends CoreEntity {
   @Column()
   phone: string;
 
-  @Column({nullable: true})
+  @Column({ nullable: true })
   worker_id: number;
 
-  @Column({nullable: true})
+  @Column({ nullable: true })
   worker_name: string;
 
-  @Column({ nullable: true })
-  request: string;
+  // @Column({ nullable: true })
+  // request: string;
 
   @Column({ nullable: true })
   prefer: string;
 
   @Column()
   status: string;
-
 }
 
 @Entity()
 export class record extends work {
   @Column()
   work_id: number;
-  @Column({nullable: true})
-  memo: string
-
+  @Column({ nullable: true })
+  memo: string;
 }
 
 @Entity()
@@ -89,5 +85,4 @@ export class ecofield extends CoreEntity {
 
   @Column()
   phone: string;
-
 }

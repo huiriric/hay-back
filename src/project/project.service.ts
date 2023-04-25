@@ -183,11 +183,20 @@ export class ProjectService {
     const result = new workListOutputDto();
 
     try {
-      // 완료된 작업 삭제
-      // const works = await this.work.delete({
-      //   project_id: work.project_id,
-      //   status: '작업 완료',
-      // });
+      // phene 번호에 해당하는 user 확인
+      const userExist = await this.user.findOneBy({ phone: work.worker_phone });
+
+      if (userExist) {
+        work.worker_id = userExist.id;
+        // phone 번호에 해당하는 user가 있다면 worker로 추가
+        const addWorker = new addWorkerDto();
+        addWorker.project_id = work.project_id;
+        addWorker.role = '방제사';
+        addWorker.worker_id = userExist.id;
+        this.addworker(addWorker);
+      } else {
+        work.worker_id = 0;
+      }
 
       // worker id 에 대한 이름 추가
       const user = await this.user.findOneBy({
@@ -501,7 +510,7 @@ export class ProjectService {
       total_len = total.length;
       done_len = done.length;
       ratio = done_len / total_len;
-      console.log(ratio);
+      // console.log(ratio);
 
       result.total = total_len;
       result.done = done_len;
