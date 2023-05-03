@@ -184,9 +184,10 @@ export class ProjectService {
 
     try {
       // phene 번호에 해당하는 user 확인
-      const userExist = await this.user.findOneBy({ phone: work.worker_phone });
-
-      if (userExist) {
+      console.log(work.worker_phone);
+      if (work.worker_phone) {
+        const userExist = await this.user.findOneBy({ phone: work.worker_phone });
+        console.log(userExist);
         work.worker_id = userExist.id;
         // phone 번호에 해당하는 user가 있다면 worker로 추가
         const addWorker = new addWorkerDto();
@@ -194,18 +195,17 @@ export class ProjectService {
         addWorker.role = '방제사';
         addWorker.worker_id = userExist.id;
         this.addworker(addWorker);
+        // worker id 에 대한 이름 추가
+        const user = await this.user.findOneBy({
+          id: work.worker_id,
+        });
+        if (user) {
+          work.worker_name = user.name;
+        } else {
+          work.worker_name = null;
+        }
       } else {
         work.worker_id = 0;
-      }
-
-      // worker id 에 대한 이름 추가
-      const user = await this.user.findOneBy({
-        id: work.worker_id,
-      });
-      if (user) {
-        work.worker_name = user.name;
-      } else {
-        work.worker_name = null;
       }
 
       const save = await this.work.save(work);
