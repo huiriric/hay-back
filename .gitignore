@@ -37,3 +37,6 @@ lerna-debug.log*
 /config
 package-lock.json
 .eslintrc.js
+
+#my gitignore
+serviceAccountkey.json

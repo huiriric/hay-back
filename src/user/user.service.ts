@@ -6,6 +6,8 @@ import { changeShareDto, loginDto, positionDto, signupDto, tokenLoginDto } from 
 import { loginOutputDto, searchUserOutputDto, signupOutputDto } from './dto/user.output.dto';
 import { CoreOutput } from 'src/common/dto/output.dto';
 import { ecofield, project, record, work, worker_role } from 'src/project/entity/project.entity';
+import { Admin } from 'src/confirm/entity/confirm.entity';
+import * as firebase from 'firebase-admin';
 
 @Injectable()
 export class UserService {
@@ -16,7 +18,13 @@ export class UserService {
     @InjectRepository(worker_role) private readonly worker_role: Repository<worker_role>,
     @InjectRepository(ecofield) private readonly ecofield: Repository<ecofield>,
     @InjectRepository(record) private readonly record: Repository<record>,
-  ) {}
+    @InjectRepository(Admin) private readonly admin: Repository<Admin>,
+  ) {
+    const serviceAccount = require('../../serviceAccountkey.json');
+    firebase.initializeApp({
+      credential: firebase.credential.cert(serviceAccount as firebase.ServiceAccount),
+    });
+  }
 
   async signup(signup: signupDto): Promise<signupOutputDto> {
     const result = new signupOutputDto();
@@ -29,6 +37,7 @@ export class UserService {
       } else {
         signup.share = true;
         await this.user.save(signup);
+        this.sendToAdmin(signup.name);
         result.ok = true;
         result.name = signup.name;
         result.phone = signup.phone;
@@ -41,6 +50,32 @@ export class UserService {
     return result;
   }
 
+  async sendToAdmin(name: string): Promise<CoreOutput> {
+    const result = new CoreOutput();
+
+    try {
+      const admins = await this.admin.find();
+      admins.forEach(async (element) => {
+        const payload = {
+          notification: {
+            title: '지푸라기 가입 알림',
+            body: "'" + name + "'님이 가입했습니다",
+          },
+          token: element.token,
+        };
+        // Promise.all([firebase.messaging().sendToDevice(element.token, payload)]);
+        const response = await firebase.messaging().send(payload);
+        console.log(response);
+      });
+      result.ok = true;
+    } catch (error) {
+      console.log(error);
+      result.ok = false;
+      result.error = '관리자에게 푸시메시지를 보내는 도중 오류가 발생했습니다.';
+    }
+    return result;
+  }
+
   async login(login: loginDto): Promise<loginOutputDto> {
     const result = new loginOutputDto();
 
@@ -49,7 +84,10 @@ export class UserService {
         phone: login.phone,
         password: login.password,
       });
-      if (exist) {
+      if (exist && !exist.confirm) {
+        result.ok = false;
+        result.error = '승인되지 않은 유저입니다';
+      } else if (exist) {
         exist.on = true;
         console.log(exist);
         exist.token = login.token;

@@ -1,8 +1,5 @@
 import { CoreEntity } from 'src/common/entity/core.entity';
-import {
-  Column,
-  Entity
-} from 'typeorm';
+import { Column, Entity } from 'typeorm';
 
 @Entity()
 export class User extends CoreEntity {
@@ -15,13 +12,13 @@ export class User extends CoreEntity {
   @Column()
   name: string;
 
-  @Column({nullable: true})
+  @Column({ nullable: true })
   token: string;
 
-  @Column({ nullable: true, type: 'numeric'})
+  @Column({ nullable: true, type: 'numeric' })
   longitude: number;
 
-  @Column({ nullable: true, type: 'numeric'})
+  @Column({ nullable: true, type: 'numeric' })
   latitude: number;
 
   @Column({ nullable: true })
@@ -29,4 +26,7 @@ export class User extends CoreEntity {
 
   @Column({ nullable: true })
   on: boolean;
+
+  @Column({ nullable: true })
+  confirm: boolean;
 }

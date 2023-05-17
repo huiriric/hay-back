@@ -1,5 +1,4 @@
-import { ApiProperty } from "@nestjs/swagger";
-
+import { ApiProperty } from '@nestjs/swagger';
 
 export class signupDto {
   @ApiProperty({ type: String, description: '휴대폰 번호' })
@@ -13,6 +12,9 @@ export class signupDto {
 
   @ApiProperty({ type: Boolean, description: '위치 공유' })
   share: boolean;
+
+  @ApiProperty({ type: Boolean, description: '승인' })
+  confirm: boolean;
 }
 
 export class loginDto {
@@ -69,4 +71,3 @@ export class changeShareDto {
   @ApiProperty({ type: Boolean, description: 'share' })
   share: boolean;
 }
-
