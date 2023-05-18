@@ -69,15 +69,14 @@ export class ConfirmService {
       var exist = await this.user.find();
       var userList = [];
       exist.forEach((element) => {
-        // console.log(element);
-        var user = new confirmUserDto();
-        user.id = element.id;
-        user.name = element.name;
-        user.phone = element.phone;
-        user.confirm = element.confirm;
-
-        // console.log(user);
-        userList.push(user);
+        if (!(element.id == 1 || element.id == 10)) {
+          var user = new confirmUserDto();
+          user.id = element.id;
+          user.name = element.name;
+          user.phone = element.phone;
+          user.confirm = element.confirm;
+          userList.push(user);
+        }
       });
       userList.sort((a, b) => a.id - b.id);
       result.list = userList;
