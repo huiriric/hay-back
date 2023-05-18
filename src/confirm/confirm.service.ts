@@ -80,7 +80,6 @@ export class ConfirmService {
         userList.push(user);
       });
       userList.sort((a, b) => a.id - b.id);
-      userList.sort((a, b) => a.confirm - b.confirm);
       result.list = userList;
       // console.log(result.list);
       result.ok = true;

@@ -28,5 +28,5 @@ export class User extends CoreEntity {
   on: boolean;
 
   @Column({ nullable: true })
-  confirm: boolean;
+  confirm: number;
 }

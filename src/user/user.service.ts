@@ -84,7 +84,7 @@ export class UserService {
         phone: login.phone,
         password: login.password,
       });
-      if (exist && !exist.confirm) {
+      if (exist && exist.confirm != 2) {
         result.ok = false;
         result.error = '승인되지 않은 유저입니다';
       } else if (exist) {

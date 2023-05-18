@@ -23,8 +23,8 @@ export class userDto {
   @ApiProperty({ type: String, description: '이름' })
   name: string;
 
-  @ApiProperty({ type: Boolean, description: '승인' })
-  confirm: boolean;
+  @ApiProperty({ type: Number, description: '승인' })
+  confirm: number;
 }
 
 export class userListOutputDto extends CoreOutput {

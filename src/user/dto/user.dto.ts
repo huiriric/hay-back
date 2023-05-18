@@ -13,8 +13,8 @@ export class signupDto {
   @ApiProperty({ type: Boolean, description: '위치 공유' })
   share: boolean;
 
-  @ApiProperty({ type: Boolean, description: '승인' })
-  confirm: boolean;
+  @ApiProperty({ type: Number, description: '승인' })
+  confirm: number;
 }
 
 export class loginDto {
