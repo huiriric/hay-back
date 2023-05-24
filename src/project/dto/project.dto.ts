@@ -105,3 +105,11 @@ export class ecofieldDto {
   @ApiProperty({ type: String, description: 'phone' })
   phone: string;
 }
+
+export class getWorksExcelDto {
+  @ApiProperty({ type: String, description: '시작일' })
+  start_day: string;
+
+  @ApiProperty({ type: String, description: '종료일' })
+  end_day: string;
+}

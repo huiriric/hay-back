@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ecofield, project, record, work, worker_role } from './entity/project.entity';
 import { Repository } from 'typeorm';
-import { workerDto, ProjectDto, workDto, addWorkerDto, recordDto, ecofieldDto } from './dto/project.dto';
+import { workerDto, ProjectDto, workDto, addWorkerDto, recordDto, ecofieldDto, getWorksExcelDto } from './dto/project.dto';
 import {
   workerListOutputDto,
   projectOutputDto,
@@ -430,25 +430,40 @@ export class ProjectService {
     return result;
   }
 
-  async getWorksExcel(project_id: number, user: number): Promise<workListOutputDto> {
+  async getWorksExcel(project_id: number, user: number, days: getWorksExcelDto): Promise<workListOutputDto> {
     const result = new workListOutputDto();
-    let list = [];
-    let userName = [];
+    console.log(project_id, user, days);
     try {
       const userRole = await this.worker_role.findOneBy({
         project_id: project_id,
         worker_id: user,
       });
+      console.log(userRole.role);
       if (userRole.role == '방제사') {
-        result.work = await this.work.findBy({
-          project_id: project_id,
-          worker_id: user,
-        });
+        result.work = await this.work.query(
+          `SELECT * FROM public.work where project_id = ` +
+            project_id +
+            ` and worker_id = ` +
+            user +
+            ` and status = '작업 완료' and "updatedAt" >= Date('` +
+            days.start_day +
+            `') and "updatedAt" <= Date('` +
+            days.end_day +
+            `') ORDER BY id ASC`,
+        );
+        console.log(result.work);
       } else {
-        result.work = await this.work.findBy({
-          project_id: project_id,
-        });
+        result.work = await this.work.query(
+          `SELECT * FROM public.work where project_id = ` +
+            project_id +
+            ` and status = '작업 완료' and "updatedAt" >= Date('` +
+            days.start_day +
+            `') and "updatedAt" <= Date('` +
+            days.end_day +
+            `') ORDER BY id ASC`,
+        );
       }
+      console.log(result.work);
 
       for (let i = 0; i < result.work.length; i++) {
         if (result.work[i].worker_id != 0) {

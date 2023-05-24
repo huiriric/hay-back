@@ -1,7 +1,7 @@
 import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { ApiBody, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { CoreOutput } from 'src/common/dto/output.dto';
-import { addWorkerDto, ecofieldDto, ProjectDto, workDto, workerDto } from './dto/project.dto';
+import { addWorkerDto, ecofieldDto, getWorksExcelDto, ProjectDto, workDto, workerDto } from './dto/project.dto';
 import {
   ecofieldListOutputDto,
   ecofieldOutputDto,
@@ -156,14 +156,15 @@ export class ProjectController {
     return this.projectService.getWorksProjectUser(project, user);
   }
 
-  @Get('getWorksExcel/:project/:user')
+  @Post('getWorksExcel/:project/:user')
   @ApiOperation({
     summary: '프로젝트 작업 리스트 불러오기',
     description: '프로젝트 작업 리스트 불러오기',
   })
+  @ApiBody({ type: getWorksExcelDto })
   @ApiResponse({ status: 200, description: '프로젝트 작업 리스트 불러오기 성공' })
-  getWorksExcel(@Param('project') project: number, @Param('user') user: number): Promise<workListOutputDto> {
-    return this.projectService.getWorksExcel(project, user);
+  getWorksExcel(@Param('project') project: number, @Param('user') user: number, @Body() days: getWorksExcelDto): Promise<workListOutputDto> {
+    return this.projectService.getWorksExcel(project, user, days);
   }
 
   @Get('getWorksPercent/:project/:user')
