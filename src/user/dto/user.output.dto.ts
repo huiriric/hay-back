@@ -1,10 +1,8 @@
-import { ApiProperty } from "@nestjs/swagger";
-import { CoreOutput } from "src/common/dto/output.dto";
-import { User } from "../entity/user.entity";
+import { ApiProperty } from '@nestjs/swagger';
+import { CoreOutput } from 'src/common/dto/output.dto';
+import { User } from '../entity/user.entity';
 
-
-export class signupOutputDto extends CoreOutput{
-
+export class signupOutputDto extends CoreOutput {
   @ApiProperty({ type: String, description: '휴대폰 번호' })
   phone: string;
 
@@ -13,7 +11,6 @@ export class signupOutputDto extends CoreOutput{
 }
 
 export class loginOutputDto extends CoreOutput {
-
   @ApiProperty({ type: Number, description: 'id' })
   id: number;
 
@@ -25,16 +22,17 @@ export class loginOutputDto extends CoreOutput {
 
   @ApiProperty({ type: Boolean, description: '위치 공유' })
   share: boolean;
+
+  @ApiProperty({ type: Boolean, description: '관리자 유무' })
+  isAdmin: boolean;
 }
 
 export class userListOutputDto extends CoreOutput {
   @ApiProperty({ type: [User], description: 'user' })
-  user: User[]
+  user: User[];
 }
 
-export class userPositionOutputDto {
-  
-}
+export class userPositionOutputDto {}
 
 export class searchUserOutputDto extends CoreOutput {
   @ApiProperty({ type: Number, description: 'id' })

@@ -146,14 +146,18 @@ export class ProjectController {
     return this.projectService.deleteWork(id);
   }
 
-  @Get('getWorksProjectUser/:project/:user')
+  @Get('getWorksProjectUser/:project/:user/:onlyMine')
   @ApiOperation({
     summary: '프로젝트 작업 리스트 불러오기',
     description: '프로젝트 작업 리스트 불러오기',
   })
   @ApiResponse({ status: 200, description: '프로젝트 작업 리스트 불러오기 성공' })
-  getWorksProjectUser(@Param('project') project: number, @Param('user') user: number): Promise<workListOutputDto> {
-    return this.projectService.getWorksProjectUser(project, user);
+  getWorksProjectUser(
+    @Param('project') project: number,
+    @Param('user') user: number,
+    @Param('onlyMine') onlyMine: boolean,
+  ): Promise<workListOutputDto> {
+    return this.projectService.getWorksProjectUser(project, user, onlyMine);
   }
 
   @Post('getWorksExcel/:project/:user')

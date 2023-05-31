@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entity/user.entity';
 import { Repository } from 'typeorm';
-import { changeShareDto, loginDto, positionDto, signupDto, tokenLoginDto } from './dto/user.dto';
+import { changeShareDto, isAdminDto, loginDto, positionDto, signupDto, tokenLoginDto } from './dto/user.dto';
 import { loginOutputDto, searchUserOutputDto, signupOutputDto } from './dto/user.output.dto';
 import { CoreOutput } from 'src/common/dto/output.dto';
 import { ecofield, project, record, work, worker_role } from 'src/project/entity/project.entity';
@@ -97,6 +97,7 @@ export class UserService {
         result.phone = exist.phone;
         result.share = exist.share;
         result.id = exist.id;
+        result.isAdmin = await this.isAdminMap(exist.id);
       } else {
         result.ok = false;
         result.error = '휴대폰 번호나 비밀번호가 일치하지 않습니다.';
@@ -123,6 +124,7 @@ export class UserService {
         result.name = exist.name;
         result.phone = exist.phone;
         result.share = exist.share;
+        result.isAdmin = await this.isAdminMap(exist.id);
       } else {
         result.ok = false;
         result.error = '토큰값이 존재하지 않습니다.';
@@ -317,5 +319,36 @@ export class UserService {
     } catch (error) {
       console.log(error);
     }
+  }
+
+  async isAdminProject(isAdminDto: isAdminDto): Promise<boolean> {
+    var isAdmin = false;
+
+    const myRole = await this.worker_role.findOneBy({
+      project_id: isAdminDto.project_id,
+      worker_id: isAdminDto.id,
+    });
+    console.log(myRole);
+
+    if (myRole.role == '관리자') {
+      isAdmin = true;
+    }
+
+    return isAdmin;
+  }
+
+  async isAdminMap(id: number): Promise<boolean> {
+    var isAdmin = false;
+    const myRoleList = await this.worker_role.findBy({
+      worker_id: id,
+    });
+
+    console.log(myRoleList);
+    myRoleList.forEach((el) => {
+      if (el.role == '관리자') {
+        isAdmin = true;
+      }
+    });
+    return isAdmin;
   }
 }

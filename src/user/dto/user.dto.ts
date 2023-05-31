@@ -71,3 +71,11 @@ export class changeShareDto {
   @ApiProperty({ type: Boolean, description: 'share' })
   share: boolean;
 }
+
+export class isAdminDto {
+  @ApiProperty({ type: Number, description: 'project_id', nullable: true })
+  project_id: number;
+
+  @ApiProperty({ type: Number, description: 'id' })
+  id: number;
+}

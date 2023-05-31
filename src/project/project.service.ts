@@ -387,32 +387,30 @@ export class ProjectService {
     return result;
   }
 
-  async getWorksProjectUser(project_id: number, user: number): Promise<workListOutputDto> {
+  async getWorksProjectUser(project_id: number, user: number, onlyMine: boolean): Promise<workListOutputDto> {
     const result = new workListOutputDto();
-    let list = [];
-    let userName = [];
+
     try {
       const userRole = await this.worker_role.findOneBy({
         project_id: project_id,
         worker_id: user,
       });
       if (userRole.role == '방제사') {
-        // result.work = await this.work.findBy({
-        //   project_id: project_id,
-        //   worker_id: user,
-        //   status: '작업 예정' || '작업 시작' || '재작업 요청' || '작업 중단',
-        // });
         result.work = await this.work.query(
           `SELECT * FROM public.work where project_id = ` + project_id + ` and worker_id = ` + user + ` and status != '작업 완료' ORDER BY id ASC`,
         );
       } else {
-        // result.work = await this.work.findBy({
-        //   project_id: project_id,
-        //   status: '작업 예정' || '작업 시작' || '재작업 요청' || '작업 중단',
-        // });
-        result.work = await this.work.query(
-          `SELECT * FROM public.work where project_id = ` + project_id + ` and status != '작업 완료' ORDER BY id ASC`,
-        );
+        if (this.valueToBoolean(onlyMine)) {
+          console.log('true' + onlyMine);
+          result.work = await this.work.query(
+            `SELECT * FROM public.work where project_id = ` + project_id + ` and worker_id = ` + user + ` and status != '작업 완료' ORDER BY id ASC`,
+          );
+        } else {
+          console.log('false' + onlyMine);
+          result.work = await this.work.query(
+            `SELECT * FROM public.work where project_id = ` + project_id + ` and status != '작업 완료' ORDER BY id ASC`,
+          );
+        }
       }
 
       for (let i = 0; i < result.work.length; i++) {
@@ -434,6 +432,16 @@ export class ProjectService {
       result.error = '프로젝트 작업 리스트를 가져오는 도중 오류가 발생했습니다.';
     }
     return result;
+  }
+
+  valueToBoolean(value: any) {
+    if (['true', 'on', 'yes', '1'].includes(value.toLowerCase())) {
+      return true;
+    }
+    if (['false', 'off', 'no', '0'].includes(value.toLowerCase())) {
+      return false;
+    }
+    return value;
   }
 
   async getWorksExcel(project_id: number, user: number, days: getWorksExcelDto): Promise<workListOutputDto> {

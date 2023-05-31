@@ -1,7 +1,7 @@
 import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { ApiBody, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { CoreOutput } from 'src/common/dto/output.dto';
-import { changeShareDto, loginDto, positionDto, signupDto, tokenLoginDto } from './dto/user.dto';
+import { changeShareDto, isAdminDto, loginDto, positionDto, signupDto, tokenLoginDto } from './dto/user.dto';
 import { searchUserOutputDto } from './dto/user.output.dto';
 import { UserService } from './user.service';
 
@@ -154,5 +154,18 @@ export class UserController {
   })
   withdraw(@Param('id') id: number): Promise<CoreOutput> {
     return this.userService.withdraw(id);
+  }
+
+  @Post('isAdmin')
+  @ApiResponse({
+    status: 200,
+    description: '프로젝트 관리자인지 확인 완료',
+  })
+  @ApiOperation({
+    description: '프로젝트 관리자인지 확인',
+  })
+  @ApiBody({ type: isAdminDto })
+  isAdmin(@Body() isAdmin: isAdminDto): Promise<boolean> {
+    return this.userService.isAdminProject(isAdmin);
   }
 }
