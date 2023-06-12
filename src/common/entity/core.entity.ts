@@ -17,3 +17,9 @@ export class CoreEntity extends BaseEntity {
     @UpdateDateColumn()
     updatedAt: Date;
 }
+
+export class OnlyId extends BaseEntity {
+    @PrimaryGeneratedColumn()
+    @ApiProperty({ type: Number, description: 'Key ID' })
+    id: number;
+}

@@ -3,6 +3,8 @@ import { ApiBody, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { CoreOutput } from 'src/common/dto/output.dto';
 import { addWorkerDto, ecofieldDto, getWorksExcelDto, ProjectDto, workDto, workerDto } from './dto/project.dto';
 import {
+  codeinfoOutputDto,
+  donginfoOutputDto,
   ecofieldListOutputDto,
   ecofieldOutputDto,
   markerInfoDto,
@@ -267,5 +269,28 @@ export class ProjectController {
   @Get('formatWork')
   formatWork() {
     return this.projectService.format_work();
+  }
+
+  @Get('dongInfo/:code')
+  @ApiOperation({
+    summary: '동 정보 가져오기',
+    description: '동 정보 가져오기',
+  })
+  @ApiResponse({ status: 200, description: '동 정보 가져오기 성공' })
+  getDong(@Param('code') code: string): Promise<donginfoOutputDto> {
+    return this.projectService.getDong(code);
+  }
+
+  @Get('codeInfo/:dong')
+  @ApiOperation({
+    summary: '동 코드 가져오기',
+    description: '동 코드 가져오기',
+  })
+  @ApiResponse({
+    status: 200,
+    description: '동 코드 가져오기 성공'
+  })
+  getCode(@Param('dong') dong: string): Promise<codeinfoOutputDto> {
+    return this.projectService.getCode(dong);
   }
 }

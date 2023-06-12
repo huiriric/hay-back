@@ -1,4 +1,4 @@
-import { CoreEntity } from 'src/common/entity/core.entity';
+import { CoreEntity, OnlyId } from 'src/common/entity/core.entity';
 import { Column, Entity, BeforeInsert } from 'typeorm';
 
 @Entity()
@@ -85,4 +85,13 @@ export class ecofield extends CoreEntity {
 
   @Column()
   phone: string;
+}
+
+@Entity()
+export class donginfo extends CoreEntity {
+  @Column()
+  code: string;
+
+  @Column()
+  dong: string;
 }

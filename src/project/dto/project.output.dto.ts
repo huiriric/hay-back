@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { IsArray, IsNotEmpty, IsNumber, IsObject } from 'class-validator';
 import { CoreOutput } from 'src/common/dto/output.dto';
 import { sharePositionDto } from 'src/user/dto/user.dto';
 import { record } from '../entity/project.entity';
@@ -84,4 +85,14 @@ export class workPercentOutputDto extends CoreOutput {
 
   @ApiProperty({ type: Number, description: 'doneNum' })
   done: number;
+}
+
+export class donginfoOutputDto extends CoreOutput {
+  @ApiProperty({ type: String, description: '동 정보' })
+  dong: string;
+}
+
+export class codeinfoOutputDto extends CoreOutput {
+  @ApiProperty({ type: String, description: '동 코드' })
+  code: string;
 }

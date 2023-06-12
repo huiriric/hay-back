@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { ecofield, project, record, work, worker_role } from './entity/project.entity';
+import { donginfo, ecofield, project, record, work, worker_role } from './entity/project.entity';
 import { Repository } from 'typeorm';
 import { workerDto, ProjectDto, workDto, addWorkerDto, recordDto, ecofieldDto, getWorksExcelDto } from './dto/project.dto';
 import {
@@ -16,6 +16,8 @@ import {
   ecofieldListOutputDto,
   ecofieldOutputDto,
   workPercentOutputDto,
+  donginfoOutputDto,
+  codeinfoOutputDto
 } from './dto/project.output.dto';
 import { User } from 'src/user/entity/user.entity';
 import { userListOutputDto } from 'src/user/dto/user.output.dto';
@@ -32,6 +34,7 @@ export class ProjectService {
     @InjectRepository(User) private readonly user: Repository<User>,
     @InjectRepository(record) private readonly record: Repository<record>,
     @InjectRepository(ecofield) private readonly ecofield: Repository<ecofield>,
+    @InjectRepository(donginfo) private readonly donginfo: Repository<donginfo>,
   ) {}
 
   async createProject(project: ProjectDto): Promise<projectOutputDto> {
@@ -401,12 +404,10 @@ export class ProjectService {
         );
       } else {
         if (this.valueToBoolean(onlyMine)) {
-          console.log('true' + onlyMine);
           result.work = await this.work.query(
             `SELECT * FROM public.work where project_id = ` + project_id + ` and worker_id = ` + user + ` and status != '작업 완료' ORDER BY id ASC`,
           );
         } else {
-          console.log('false' + onlyMine);
           result.work = await this.work.query(
             `SELECT * FROM public.work where project_id = ` + project_id + ` and status != '작업 완료' ORDER BY id ASC`,
           );
@@ -808,4 +809,48 @@ export class ProjectService {
       }
     }
   }
+
+  async getDong(code: string): Promise<donginfoOutputDto> {
+    const result = new donginfoOutputDto();
+    try {
+      const exist = await this.donginfo.findOneBy({
+        code: code,
+      });
+      if (exist != null) {
+        result.dong = exist.dong;
+        result.ok = true;
+      } else {
+        result.ok = false;
+        result.error = '해당 코드에 대한 동 정보가 존재하지 않습니다';
+      }
+    } catch (error) {
+      console.log(error);
+      result.error = '동 정보를 가져오는 도중 오류가 발생했습니다';
+      result.ok = false;
+    }
+    return result;
+  }
+
+  async getCode(dong: string): Promise<codeinfoOutputDto> {
+    const result = new codeinfoOutputDto();
+    try {
+      const exist = await this.donginfo.findOneBy({
+        dong: dong,
+      });
+      if (exist != null) {
+        result.code = exist.code;
+        result.ok = true;
+      } else {
+        result.ok = false;
+        result.error = '해당 동에 대한 코드 정보가 존재하지 않습니다';
+      }
+    } catch (error) {
+      console.log(error);
+      result.error = '코드 정보를 가져오는 도중 오류가 발생했습니다';
+      result.ok = false;
+    }
+    return result;
+  }
+
+  
 }

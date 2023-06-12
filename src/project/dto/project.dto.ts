@@ -1,5 +1,4 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { ecofield, record } from '../entity/project.entity';
 
 export class ProjectDto {
   @ApiProperty({ type: Number, description: 'primary key' })
