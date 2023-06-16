@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { donginfo, ecofield, project, record, work, worker_role } from './entity/project.entity';
+import { donginfo, ecofield, onhold, project, record, work, worker_role } from './entity/project.entity';
 import { Repository } from 'typeorm';
 import { workerDto, ProjectDto, workDto, addWorkerDto, recordDto, ecofieldDto, getWorksExcelDto } from './dto/project.dto';
 import {
@@ -24,6 +24,11 @@ import { userListOutputDto } from 'src/user/dto/user.output.dto';
 import { CoreOutput } from 'src/common/dto/output.dto';
 import e from 'express';
 import { sharePositionDto } from 'src/user/dto/user.dto';
+import { request } from 'http';
+import { Http2ServerRequest } from 'http2';
+import axios from 'axios';
+import { map } from 'rxjs/operators';
+import { URL } from 'url';
 
 @Injectable()
 export class ProjectService {
@@ -35,6 +40,7 @@ export class ProjectService {
     @InjectRepository(record) private readonly record: Repository<record>,
     @InjectRepository(ecofield) private readonly ecofield: Repository<ecofield>,
     @InjectRepository(donginfo) private readonly donginfo: Repository<donginfo>,
+    @InjectRepository(onhold) private readonly onhold: Repository<onhold>,
   ) {}
 
   async createProject(project: ProjectDto): Promise<projectOutputDto> {
@@ -215,6 +221,14 @@ export class ProjectService {
         }
       } else {
         work.worker_id = 0;
+      }
+      var url = `https://dapi.kakao.com/v2/local/search/address.json?analyze_type=exact&page=1&size=10&query=${work.address}`        
+
+      const response = await axios.get(url, { headers: { 'Authorization': 'KakaoAK 62ea0505327e53acc3995fc7575e68a0' } })
+      console.log(response.data);
+      if (response.data['meta']['total_count'] > 0) {
+        work.lat = parseFloat(response.data['documents']![0]['y']) ?? null;
+        work.lng = parseFloat(response.data['documents']![0]['x']) ?? null;
       }
 
       const save = await this.work.save(work);
@@ -691,8 +705,15 @@ export class ProjectService {
 
   async saveEcofield(ecofields: ecofieldDto): Promise<CoreOutput> {
     const result = new CoreOutput();
-
     try {
+      
+      var url = `https://dapi.kakao.com/v2/local/search/address.json?analyze_type=exact&page=1&size=10&query=${ecofields.address}`
+      const response = await axios.get(url, { headers: { 'Authorization': 'KakaoAK 62ea0505327e53acc3995fc7575e68a0' } })
+      console.log(response.data);
+      if (response.data['meta']['total_count'] > 0) {
+        ecofields.lat = parseFloat(response.data['documents']![0]['y']) ?? null;
+        ecofields.lng = parseFloat(response.data['documents']![0]['x']) ?? null;
+      }
       const save = await this.ecofield.save(ecofields);
       result.ok = true;
     } catch (error) {
@@ -852,5 +873,133 @@ export class ProjectService {
     return result;
   }
 
-  
+  async getHoldWorkUser(project_id: number, user_id: number): Promise<workListOutputDto> {
+    const result = new workListOutputDto();
+
+    try {
+      const workerRole = await this.worker_role.findOneBy({
+        project_id: project_id,
+        worker_id: user_id
+      })
+      var work;
+      if (workerRole.role == '방제사') {
+        work = await this.onhold.findBy({
+        project_id: project_id,
+        worker_id: user_id
+      })
+      } else {
+        work = await this.onhold.findBy({
+          project_id: project_id
+        })
+      }
+      
+      result.work = work;
+      result.ok = true
+    } catch (error) {
+      console.log(error)
+      result.ok = false;
+      result.error = '보류된 작업을 가져오는 도중 오류가 발생했습니다.'
+    }
+
+    return result;
+  }
+
+  async toOnHold(id: number): Promise<CoreOutput> {
+    const result = new CoreOutput();
+
+    try {
+      const work = await this.work.findOneBy({ id: id });
+      const save = await this.onhold.save(work);
+      if (save) {
+        await this.work.delete({ id: id });
+      }
+      result.ok = true;
+    } catch (error) {
+      console.log(error)
+      result.error = '작업을 보류하는 도중 오류가 발생했습니다.';
+      result.ok = false;
+
+    }
+    return result;
+  }
+
+  async fromOnHold(id: number): Promise<CoreOutput> {
+    const result = new CoreOutput();
+
+    try {
+      const work = await this.onhold.findOneBy({ id: id });
+      const save = await this.work.save(work);
+      if (save) {
+        await this.onhold.delete({ id: id });
+      }
+      result.ok = true;
+    } catch (error) {
+      console.log(error);
+      result.error = '보류된 작업을 재개하는 도중 오류가 발생했습니다.';
+      result.ok = false;
+    }
+    return result;
+  }
+
+  async getEcoLatLng(): Promise<CoreOutput> {
+    const result = new CoreOutput();
+
+    try {
+      var eco = await this.ecofield.findBy({
+        lat: null
+      });
+      for await (const v of eco) {
+        // console.log(v.address);
+        var url = `https://dapi.kakao.com/v2/local/search/address.json?analyze_type=exact&page=1&size=10&query=${v.address}`        
+
+        const response = await axios.get(url, { headers: { 'Authorization': 'KakaoAK 62ea0505327e53acc3995fc7575e68a0' } })
+        console.log(response.data);
+        if (response.data['meta']['total_count'] > 0) {
+          v.lat = parseFloat(response.data['documents']![0]['y']) ?? null;
+          v.lng = parseFloat(response.data['documents']![0]['x']) ?? null;
+        }
+        
+        console.log(v)
+        await this.ecofield.save(v);
+      }
+      
+    } catch (error) {
+      console.log(error)
+      result.ok = false;
+      result.error = '경위도 가져오는 도중 오류 발생'
+    }
+
+    return result;
+  }
+
+  async getWorkLatLng(): Promise<CoreOutput> {
+    const result = new CoreOutput();
+
+    try {
+      var eco = await this.work.findBy({
+        lat: null
+      });
+      for await (const v of eco) {
+        // console.log(v.address);
+        var url = `https://dapi.kakao.com/v2/local/search/address.json?analyze_type=exact&page=1&size=10&query=${v.address}`        
+
+        const response = await axios.get(url, { headers: { 'Authorization': 'KakaoAK 62ea0505327e53acc3995fc7575e68a0' } })
+        console.log(response.data);
+        if (response.data['meta']['total_count'] > 0) {
+          v.lat = parseFloat(response.data['documents']![0]['y']) ?? null;
+          v.lng = parseFloat(response.data['documents']![0]['x']) ?? null;
+        }
+        
+        console.log(v)
+        await this.work.save(v);
+      }
+      
+    } catch (error) {
+      console.log(error)
+      result.ok = false;
+      result.error = '경위도 가져오는 도중 오류 발생'
+    }
+
+    return result;
+  }
 }

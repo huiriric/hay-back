@@ -81,6 +81,12 @@ export class workDto {
 
   @ApiProperty({ type: String, description: 'memo' })
   memo?: string;
+
+  @ApiProperty({ type: Number, description: 'lat' })
+  lat: number
+
+  @ApiProperty({ type: Number, description: 'lng' })
+  lng: number
 }
 
 export class recordDto extends workDto {
@@ -103,6 +109,12 @@ export class ecofieldDto {
 
   @ApiProperty({ type: String, description: 'phone' })
   phone: string;
+
+  @ApiProperty({ type: Number, description: 'lat' })
+  lat: number;
+
+  @ApiProperty({ type: Number, description: 'lng' })
+  lng: number;
 }
 
 export class getWorksExcelDto {

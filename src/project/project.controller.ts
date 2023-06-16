@@ -1,5 +1,5 @@
 import { Body, Controller, Get, Param, Post } from '@nestjs/common';
-import { ApiBody, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { ApiBody, ApiOperation, ApiProperty, ApiResponse } from '@nestjs/swagger';
 import { CoreOutput } from 'src/common/dto/output.dto';
 import { addWorkerDto, ecofieldDto, getWorksExcelDto, ProjectDto, workDto, workerDto } from './dto/project.dto';
 import {
@@ -292,5 +292,70 @@ export class ProjectController {
   })
   getCode(@Param('dong') dong: string): Promise<codeinfoOutputDto> {
     return this.projectService.getCode(dong);
+  }
+
+  @Get('getHoldWork/:project_id/:user_id')
+  @ApiOperation({
+    summary: '보류된 작업 가져오기',
+    description: '보류된 작업 가져오기'
+  })
+  @ApiResponse({
+    status: 200,
+    description: '보류된 작업 가져오기 성공'
+  })
+  getHoldWork(@Param('project_id') project_id: number, @Param('user_id') user_id: number): Promise<workListOutputDto> {
+    return this.projectService.getHoldWorkUser(project_id, user_id);
+  }
+
+  @Get('toOnHold/:id')
+  @ApiOperation({
+    summary: '작업 보류하기',
+    description: '작업 보류하기'
+  })
+  @ApiResponse({
+    status: 200,
+    description: '작업 보류하기 성공'
+    })
+  toOnHold(@Param('id') id: number): Promise<CoreOutput> {
+    return this.projectService.toOnHold(id);
+  }
+
+  @Get('fromOnHold/:id')
+  @ApiOperation({
+    summary: '보류된 작업 재개',
+    description: '보류된 작업 재개'
+  })
+  @ApiResponse({
+    status: 200,
+    description: '보류된 작업 재개 성공'
+  })
+  fromOnHold(@Param('id') id: number): Promise<CoreOutput> {
+    return this.projectService.fromOnHold(id);
+  }
+
+  @Get('getEcoLatLng')
+  @ApiOperation({
+    summary: '경위도 가져오기',
+    description: '경위도 가져오기'
+  })
+  @ApiResponse({
+    status: 200,
+    description: '경위도 가져오기 성공'
+  })
+  getEcoLatLng(): Promise<CoreOutput> {
+    return this.projectService.getEcoLatLng();
+  }
+
+  @Get('getWorkLatLng')
+  @ApiOperation({
+    summary: '경위도 가져오기',
+    description: '경위도 가져오기'
+  })
+  @ApiResponse({
+    status: 200,
+    description: '경위도 가져오기 성공'
+  })
+  getWorkLatLng(): Promise<CoreOutput> {
+    return this.projectService.getWorkLatLng();
   }
 }

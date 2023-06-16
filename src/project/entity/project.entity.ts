@@ -59,6 +59,12 @@ export class work extends CoreEntity {
 
   @Column()
   status: string;
+
+  @Column({ nullable: true, type: 'numeric' })
+  lat: number
+
+  @Column({ nullable: true, type: 'numeric' })
+  lng: number
 }
 
 @Entity()
@@ -85,6 +91,12 @@ export class ecofield extends CoreEntity {
 
   @Column()
   phone: string;
+
+  @Column({nullable: true, type: 'numeric'})
+  lat: number;
+
+  @Column({nullable: true, type: 'numeric'})
+  lng: number;
 }
 
 @Entity()
@@ -95,3 +107,6 @@ export class donginfo extends CoreEntity {
   @Column()
   dong: string;
 }
+
+@Entity()
+export class onhold extends work { }
