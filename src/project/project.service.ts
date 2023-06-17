@@ -1076,7 +1076,7 @@ export class ProjectService {
 
         work.polygon = polyRes.data['response']['result'] != null ? polyRes.data['response']['result']['featureCollection']['features'][0]['geometry']['coordinates'][0][0] : []
         
-        // await this.work.save(work)
+        await this.work.save(work)
       }
       
     } catch (error) {
