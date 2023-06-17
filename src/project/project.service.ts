@@ -29,6 +29,7 @@ import { Http2ServerRequest } from 'http2';
 import axios from 'axios';
 import { map } from 'rxjs/operators';
 import { URL } from 'url';
+import { CommonValue } from 'src/common/commonValue';
 
 @Injectable()
 export class ProjectService {
@@ -230,6 +231,26 @@ export class ProjectService {
         work.lat = parseFloat(response.data['documents']![0]['y']) ?? null;
         work.lng = parseFloat(response.data['documents']![0]['x']) ?? null;
       }
+      CommonValue.doMap.forEach((long, short) => {
+          work.address = work.address.replace(short, long)
+        })
+      console.log(work.address)
+      const dong = work.address.split(' ').slice(0, -1).join(' ')
+      const dongInfo = await this.donginfo.findOneBy({
+        dong: dong
+      })
+      const code = dongInfo.code
+
+      const addressParts = work.address.split(' ')
+      const lastPart = addressParts[addressParts.length - 1]
+      const numberParts = lastPart.match(/(\d+)-?(\d*)/)
+
+      const pnu = [code, '1', numberParts && numberParts[1] ? numberParts[1].padStart(4, '0') : '0000', numberParts && numberParts[2] ? numberParts[2].padStart(4, '0') : '0000'].join('')
+      console.log(pnu)
+
+      const polyRes = await axios.get(`http://api.vworld.kr/req/data?service=data&request=GetFeature&data=LP_PA_CBND_BUBUN&key=79D897B2-5A48-3F24-9BD6-3FA37ECF90C9&format=json&columns=ag_geom&attrFilter=pnu:=:${pnu}`);
+
+      work.polygon = polyRes.data['response']['result'] != null ? polyRes.data['response']['result']['featureCollection']['features'][0]['geometry']['coordinates'][0][0] : []
 
       const save = await this.work.save(work);
 
@@ -714,6 +735,28 @@ export class ProjectService {
         ecofields.lat = parseFloat(response.data['documents']![0]['y']) ?? null;
         ecofields.lng = parseFloat(response.data['documents']![0]['x']) ?? null;
       }
+
+      CommonValue.doMap.forEach((long, short) => {
+          ecofields.address = ecofields.address.replace(short, long)
+        })
+
+      const dong = ecofields.address.split(' ').slice(0, -1).join(' ')
+      const dongInfo = await this.donginfo.findOneBy({
+        dong: dong
+      })
+      const code = dongInfo.code
+
+      const addressParts = ecofields.address.split(' ')
+      const lastPart = addressParts[addressParts.length - 1]
+      const numberParts = lastPart.match(/(\d+)-?(\d*)/)
+
+      const pnu = [code, '1', numberParts && numberParts[1] ? numberParts[1].padStart(4, '0') : '0000', numberParts && numberParts[2] ? numberParts[2].padStart(4, '0') : '0000'].join('')
+      console.log(pnu)
+
+      const polyRes = await axios.get(`http://api.vworld.kr/req/data?service=data&request=GetFeature&data=LP_PA_CBND_BUBUN&key=79D897B2-5A48-3F24-9BD6-3FA37ECF90C9&format=json&columns=ag_geom&attrFilter=pnu:=:${pnu}`);
+
+      ecofields.polygon = polyRes.data['response']['result'] != null ? polyRes.data['response']['result']['featureCollection']['features'][0]['geometry']['coordinates'][0][0] : []
+
       const save = await this.ecofield.save(ecofields);
       result.ok = true;
     } catch (error) {
@@ -1000,6 +1043,86 @@ export class ProjectService {
       result.error = '경위도 가져오는 도중 오류 발생'
     }
 
+    return result;
+  }
+
+  
+
+
+  async getWorkPolygon(): Promise<CoreOutput> {
+    const result = new CoreOutput();
+
+    try {
+      const list = await this.work.find();
+
+      for await (const work of list) {
+        CommonValue.doMap.forEach((long, short) => {
+          work.address = work.address.replace(short, long)
+        })
+        const dong = work.address.split(' ').slice(0, -1).join(' ')
+        const dongInfo = await this.donginfo.findOneBy({
+          dong: dong
+        })
+        const code = dongInfo.code
+
+        const addressParts = work.address.split(' ')
+        const lastPart = addressParts[addressParts.length - 1]
+        const numberParts = lastPart.match(/(\d+)-?(\d*)/)
+
+        const pnu = [code, '1', numberParts && numberParts[1] ? numberParts[1].padStart(4, '0') : '0000', numberParts && numberParts[2] ? numberParts[2].padStart(4, '0') : '0000'].join('')
+        console.log(pnu)
+
+        const polyRes = await axios.get(`http://api.vworld.kr/req/data?service=data&request=GetFeature&data=LP_PA_CBND_BUBUN&key=79D897B2-5A48-3F24-9BD6-3FA37ECF90C9&format=json&columns=ag_geom&attrFilter=pnu:=:${pnu}`);
+
+        work.polygon = polyRes.data['response']['result'] != null ? polyRes.data['response']['result']['featureCollection']['features'][0]['geometry']['coordinates'][0][0] : []
+        
+        // await this.work.save(work)
+      }
+      
+    } catch (error) {
+      console.log(error)
+      result.ok = false;
+      result.error = 'work polygon 오류'
+    }
+    return result;
+  }
+
+  async getEcoPolygon(): Promise<CoreOutput> {
+    const result = new CoreOutput();
+
+    try {
+      const list = await this.ecofield.find();
+
+      for await (const eco of list) {
+        CommonValue.doMap.forEach((long, short) => {
+          eco.address = eco.address.replace(short, long)
+        })
+        const dong = eco.address.split(' ').slice(0, -1).join(' ')
+        const dongInfo = await this.donginfo.findOneBy({
+          dong: dong
+        })
+        const code = dongInfo.code
+
+        const addressParts = eco.address.split(' ')
+        const lastPart = addressParts[addressParts.length - 1]
+        const numberParts = lastPart.match(/(\d+)-?(\d*)/)
+
+        const pnu = [code, '1', numberParts && numberParts[1] ? numberParts[1].padStart(4, '0') : '0000', numberParts && numberParts[2] ? numberParts[2].padStart(4, '0') : '0000'].join('')
+        console.log(pnu)
+
+        const polyRes = await axios.get(`http://api.vworld.kr/req/data?service=data&request=GetFeature&data=LP_PA_CBND_BUBUN&key=79D897B2-5A48-3F24-9BD6-3FA37ECF90C9&format=json&columns=ag_geom&attrFilter=pnu:=:${pnu}`);
+
+        console.log(polyRes.data['response']['result'] != null ? polyRes.data['response']['result']['featureCollection']['features'][0]['geometry']['coordinates'][0][0] : [])
+        eco.polygon = polyRes.data['response']['result'] != null ? polyRes.data['response']['result']['featureCollection']['features'][0]['geometry']['coordinates'][0][0] : []
+        
+        await this.ecofield.save(eco)
+      }
+      
+    } catch (error) {
+      console.log(error)
+      result.ok = false;
+      result.error = 'work polygon 오류'
+    }
     return result;
   }
 }

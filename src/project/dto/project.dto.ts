@@ -87,6 +87,9 @@ export class workDto {
 
   @ApiProperty({ type: Number, description: 'lng' })
   lng: number
+
+  @ApiProperty({ type: Number, description: 'polygon' })
+  polygon: number[][];
 }
 
 export class recordDto extends workDto {
@@ -115,6 +118,9 @@ export class ecofieldDto {
 
   @ApiProperty({ type: Number, description: 'lng' })
   lng: number;
+
+  @ApiProperty({ type: Number, description: 'polygon' })
+  polygon: number[][];
 }
 
 export class getWorksExcelDto {

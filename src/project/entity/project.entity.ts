@@ -65,6 +65,9 @@ export class work extends CoreEntity {
 
   @Column({ nullable: true, type: 'numeric' })
   lng: number
+
+  @Column({nullable: true, type:'jsonb'})
+  polygon: number[][]
 }
 
 @Entity()
@@ -97,6 +100,9 @@ export class ecofield extends CoreEntity {
 
   @Column({nullable: true, type: 'numeric'})
   lng: number;
+
+  @Column({nullable: true, type:'jsonb'})
+  polygon: number[][]
 }
 
 @Entity()

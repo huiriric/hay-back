@@ -358,4 +358,30 @@ export class ProjectController {
   getWorkLatLng(): Promise<CoreOutput> {
     return this.projectService.getWorkLatLng();
   }
+
+  @Get('getWorkPolygon')
+  @ApiOperation({
+    summary: 'polygon 가져오기',
+    description: 'polygon 가져오기'
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'polygon 가져오기 성공'
+  })
+  getWorkPolygon(): Promise<CoreOutput> {
+    return this.projectService.getWorkPolygon();
+  }
+
+  @Get('getEcoPolygon')
+  @ApiOperation({
+    summary: 'polygon 가져오기',
+    description: 'polygon 가져오기'
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'polygon 가져오기 성공'
+  })
+  getEcoPolygon(): Promise<CoreOutput> {
+    return this.projectService.getEcoPolygon();
+  }
 }
