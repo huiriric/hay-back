@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { donginfo, ecofield, onhold, project, record, work, worker_role } from './entity/project.entity';
 import { Repository } from 'typeorm';
-import { workerDto, ProjectDto, workDto, addWorkerDto, recordDto, ecofieldDto, getWorksExcelDto } from './dto/project.dto';
+import { workerDto, ProjectDto, workDto, addWorkerDto, recordDto, ecofieldDto, getWorksExcelDto, workListDto, ecoListDto } from './dto/project.dto';
 import {
   workerListOutputDto,
   projectOutputDto,
@@ -189,12 +189,12 @@ export class ProjectService {
     return result;
   }
 
-  async saveWork(work: workDto): Promise<workListOutputDto> {
+  async saveWork(works: workListDto): Promise<workListOutputDto> {
     const result = new workListOutputDto();
 
     try {
-      // phene 번호에 해당하는 user 확인
-      console.log(work.worker_phone);
+      for await (const work of works.list) {
+        // phene 번호에 해당하는 user 확인
       if (work.worker_phone) {
         const userExist = await this.user.findOneBy({ phone: work.worker_phone });
         console.log(userExist);
@@ -256,6 +256,8 @@ export class ProjectService {
 
       // 기록
       this.recordWork(work);
+      }
+      
 
       result.ok = true;
     } catch (error) {
@@ -724,40 +726,44 @@ export class ProjectService {
     return result;
   }
 
-  async saveEcofield(ecofields: ecofieldDto): Promise<CoreOutput> {
+  async saveEcofield(ecoList: ecoListDto): Promise<CoreOutput> {
     const result = new CoreOutput();
     try {
-      
-      var url = `https://dapi.kakao.com/v2/local/search/address.json?analyze_type=exact&page=1&size=10&query=${ecofields.address}`
-      const response = await axios.get(url, { headers: { 'Authorization': 'KakaoAK 62ea0505327e53acc3995fc7575e68a0' } })
-      console.log(response.data);
-      if (response.data['meta']['total_count'] > 0) {
-        ecofields.lat = parseFloat(response.data['documents']![0]['y']) ?? null;
-        ecofields.lng = parseFloat(response.data['documents']![0]['x']) ?? null;
-      }
 
-      CommonValue.doMap.forEach((long, short) => {
-          ecofields.address = ecofields.address.replace(short, long)
+      for await (const ecofield of ecoList.list) {
+        var url = `https://dapi.kakao.com/v2/local/search/address.json?analyze_type=exact&page=1&size=10&query=${ecofield.address}`
+        const response = await axios.get(url, { headers: { 'Authorization': 'KakaoAK 62ea0505327e53acc3995fc7575e68a0' } })
+        // console.log(response.data);
+        if (response.data['meta']['total_count'] > 0) {
+          ecofield.lat = parseFloat(response.data['documents']![0]['y']) ?? null;
+          ecofield.lng = parseFloat(response.data['documents']![0]['x']) ?? null;
+        }
+
+        CommonValue.doMap.forEach((long, short) => {
+            ecofield.address = ecofield.address.replace(short, long)
+          })
+
+        const dong = ecofield.address.split(' ').slice(0, -1).join(' ')
+        const dongInfo = await this.donginfo.findOneBy({
+          dong: dong
         })
+        const code = dongInfo.code
 
-      const dong = ecofields.address.split(' ').slice(0, -1).join(' ')
-      const dongInfo = await this.donginfo.findOneBy({
-        dong: dong
-      })
-      const code = dongInfo.code
+        const addressParts = ecofield.address.split(' ')
+        const lastPart = addressParts[addressParts.length - 1]
+        const numberParts = lastPart.match(/(\d+)-?(\d*)/)
 
-      const addressParts = ecofields.address.split(' ')
-      const lastPart = addressParts[addressParts.length - 1]
-      const numberParts = lastPart.match(/(\d+)-?(\d*)/)
+        const pnu = [code, '1', numberParts && numberParts[1] ? numberParts[1].padStart(4, '0') : '0000', numberParts && numberParts[2] ? numberParts[2].padStart(4, '0') : '0000'].join('')
+        // console.log(pnu)
 
-      const pnu = [code, '1', numberParts && numberParts[1] ? numberParts[1].padStart(4, '0') : '0000', numberParts && numberParts[2] ? numberParts[2].padStart(4, '0') : '0000'].join('')
-      console.log(pnu)
+        const polyRes = await axios.get(`http://api.vworld.kr/req/data?service=data&request=GetFeature&data=LP_PA_CBND_BUBUN&key=79D897B2-5A48-3F24-9BD6-3FA37ECF90C9&format=json&columns=ag_geom&attrFilter=pnu:=:${pnu}`);
 
-      const polyRes = await axios.get(`http://api.vworld.kr/req/data?service=data&request=GetFeature&data=LP_PA_CBND_BUBUN&key=79D897B2-5A48-3F24-9BD6-3FA37ECF90C9&format=json&columns=ag_geom&attrFilter=pnu:=:${pnu}`);
+        ecofield.polygon = polyRes.data['response']['result'] != null ? polyRes.data['response']['result']['featureCollection']['features'][0]['geometry']['coordinates'][0][0] : []
 
-      ecofields.polygon = polyRes.data['response']['result'] != null ? polyRes.data['response']['result']['featureCollection']['features'][0]['geometry']['coordinates'][0][0] : []
-
-      const save = await this.ecofield.save(ecofields);
+        const save = await this.ecofield.save(ecofield);
+      }
+      console.log('save eco done');
+      
       result.ok = true;
     } catch (error) {
       console.log(error);

@@ -1,7 +1,7 @@
 import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { ApiBody, ApiOperation, ApiProperty, ApiResponse } from '@nestjs/swagger';
 import { CoreOutput } from 'src/common/dto/output.dto';
-import { addWorkerDto, ecofieldDto, getWorksExcelDto, ProjectDto, workDto, workerDto } from './dto/project.dto';
+import { addWorkerDto, ecofieldDto, ecoListDto, getWorksExcelDto, ProjectDto, workDto, workerDto, workListDto } from './dto/project.dto';
 import {
   codeinfoOutputDto,
   donginfoOutputDto,
@@ -84,8 +84,8 @@ export class ProjectController {
   @ApiOperation({
     summary: '작업 저장',
   })
-  @ApiBody({ type: workDto })
-  saveWork(@Body() workList: workDto): Promise<workListOutputDto> {
+  @ApiBody({ type: workListDto })
+  saveWork(@Body() workList: workListDto): Promise<workListOutputDto> {
     return this.projectService.saveWork(workList);
   }
 
@@ -232,8 +232,8 @@ export class ProjectController {
     summary: '친환경 필지 저장',
   })
   @ApiBody({ type: ecofieldDto })
-  saveEcofield(@Body() ecofieldDto: ecofieldDto): Promise<CoreOutput> {
-    return this.projectService.saveEcofield(ecofieldDto);
+  saveEcofield(@Body() ecoListDto: ecoListDto): Promise<CoreOutput> {
+    return this.projectService.saveEcofield(ecoListDto);
   }
 
   @Get('getEcoListProject/:id')

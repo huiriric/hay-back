@@ -1,4 +1,4 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiOperation, ApiProperty } from '@nestjs/swagger';
 
 export class ProjectDto {
   @ApiProperty({ type: Number, description: 'primary key' })
@@ -92,6 +92,11 @@ export class workDto {
   polygon: number[][];
 }
 
+export class workListDto {
+  @ApiProperty({ type: [workDto], description: '작업 리스트' })
+  list: workDto[];
+}
+
 export class recordDto extends workDto {
   @ApiProperty({ type: Number, description: 'work_id' })
   work_id: number;
@@ -121,6 +126,11 @@ export class ecofieldDto {
 
   @ApiProperty({ type: Number, description: 'polygon' })
   polygon: number[][];
+}
+
+export class ecoListDto {
+  @ApiProperty({ type: [ecofieldDto], description: '주의필지 리스트' })
+  list: ecofieldDto[];
 }
 
 export class getWorksExcelDto {
