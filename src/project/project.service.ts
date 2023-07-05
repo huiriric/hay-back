@@ -233,7 +233,8 @@ export class ProjectService {
       }
       CommonValue.doMap.forEach((long, short) => {
           work.address = work.address.replace(short, long)
-        })
+      })
+      work.address = work.address.trimEnd(); // 마지막에 공백 있으면 제거
       console.log(work.address)
       const dong = work.address.split(' ').slice(0, -1).join(' ')
       const dongInfo = await this.donginfo.findOneBy({
